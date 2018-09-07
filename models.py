@@ -131,6 +131,10 @@ class Students(Base):
     firstname = db.Column(db.String(20))
     lastname = db.Column(db.String(20))
 
+    #studyplan = db.relationship('Studyplans', backref=db.backref('students', uselist=False))
+    studyplan = db.relationship('Studyplans', uselist=False)
+
+
     def __init__(self, id):
         self.id = id
     def __repr__(self):
@@ -139,22 +143,21 @@ class Students(Base):
 
 class Studyplans(Base):
     __tablename__ = 'studyplans'
-    id = db.Column(db.String(7),  db.ForeignKey('students.id'),  primary_key=True)
+    id = db.Column(db.String(7), db.ForeignKey('students.id'), primary_key=True)
     curriculum_id = db.Column(db.Integer, db.ForeignKey('curricula.id'))
 
-    courses = db.relationship('Courses', secondary='studyplan_courses_assosiation')
+    
+    courses = db.relationship('Courses', secondary='studyplan_courses_association')
 
     def __init__(self, id, curriculum_id):
         self.id = id
         self.curriculum_id = curriculum_id
 
-    def __repr__(self):
-        return self.id
-
 class StudyplansCourses(Base):
-    __tablename__ = 'studyplan_courses_assosiation'
+    __tablename__ = 'studyplan_courses_association'
     studyplan_id = db.Column(db.String(7), db.ForeignKey('studyplans.id'), primary_key=True)
     course_id = db.Column(db.String(7), db.ForeignKey('courses.id'),  primary_key=True)
+    #state = db.Column(db.Boolean, default=False)
 
     def __init__(self, studyplan_id, course_id):
         self.course_id=course_id

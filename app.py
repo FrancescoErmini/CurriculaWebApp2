@@ -83,8 +83,9 @@ def setAcademicyear():
 	try:
 		data = request.get_json()	
 		academicyear = Academicyears(id=data['id'])
-		academicyear.start = data['start']
-		academicyear.end = data['end']
+		if data['start'] is not None:
+			academicyear.start = data['start']
+			academicyear.end = data['end']
 		db.session.add(academicyear)
 		db.session.commit()
 	except Exception as e:
@@ -379,6 +380,14 @@ def deleteCurriculumGroups(curriculum_id, group_id):
 	return jsonify({"id": group.id}),201
 
 
+@app.route('/curriculum/<int:curriculum_id>/courses/', methods=['GET'])
+def getCurriculumCourses(curriculum_id):
+	try:
+		curriculum = Curricula.query.get(curriculum_id)
+
+	except Exception as e:
+		return jsonify({"error": str(e)}),500
+	return jsonify({"curriculum":{"id": curriculum.id, "title": curriculum.title}, "groups": [{"id": g.id, "name": g.name, "n": g.n, "cfu": g.cfu, "courses": [{"id": c.id, "name": c.name, "ssd": c.ssd, "cfu": c.cfu, "year": c.year, "semester": c.semester, "ac": c.ac, "url": c.url} for c in g.courses]} for g in curriculum.groups]})
 
 
 
@@ -433,9 +442,7 @@ def deleteStudent(group_id):
 def setStudyplan():
 	try:
 		data = request.get_json() 
-		student = Students.query.get(data['id']) #note: studyplan id == student id
-		curriculum = Curricula.query.get(data['curriculum'])
-		studyplan = Studyplans(id=student.id, curriculum_id=curriculum.id)
+		studyplan = Studyplans( id=data['student'], curriculum_id=data['curriculum'])
 		for c in data['courses']:
 			course = Courses.query.get(c['id'])
 			studyplan.courses.append(course)
@@ -446,16 +453,16 @@ def setStudyplan():
 		return jsonify({"error": str(e)}),500
 	return jsonify(data),201
 
-@app.route('/studyplan/<string:studyplan_id>/', methods=['GET'])
-def getStudyplan(studyplan_id):
+@app.route('/studyplan/<string:student_id>/', methods=['GET'])
+def getStudyplan(student_id):
 	try: 
-		studyplan = Studyplans.query.get(studyplan_id)
-		student = Students.query.get(studyplan_id)
+		studyplan = Studyplans.query.get(student_id)
+		student = Students.query.get(student_id)
 		curriculum = Curricula.query.get(studyplan.curriculum_id)
 
 	except Exception as e:
 		return jsonify({"error": str(e)}),500
-	return jsonify({"id": studyplan.id, "student": [{"id": student.id, "firstname": student.firstname, "lastname": student.lastname }], "curriculum": [{"id": curriculum.id, "title": curriculum.title, "ac": curriculum.ac}], "courses": [{"id": c.id, "name": c.name, "ssd": c.ssd, "url": c.url, "cfu": c.cfu, "year": c.year, "semester": c.semester} for c in studyplan.courses ] }),201	
+	return jsonify({"id": studyplan.id, "student": {"id": student.id, "firstname": student.firstname, "lastname": student.lastname }, "curriculum": {"id": curriculum.id, "title": curriculum.title, "ac": curriculum.ac}, "courses": [{"id": c.id, "name": c.name, "ssd": c.ssd, "url": c.url, "cfu": c.cfu, "year": c.year, "semester": c.semester} for c in studyplan.courses ] }),201	
 
 #	return jsonify({"curriculum":curriculum.id, "title":curriculum.title, "groups":[{"id": g.id, "cfu":g.cfu, "n":g.n, "courses": [{"code": k.id, "name": k.name, "ssd": k.ssd, "url":k.url, "cfu": k.credits, "key": k.key} for k in q if k.group_id == g.id]} for g in groups]}),201
 

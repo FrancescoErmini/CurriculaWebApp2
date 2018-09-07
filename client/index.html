@@ -1,0 +1,406 @@
+<html ng-app="app">
+<head>
+  <title>Study plan</title>
+   <meta charset="utf-8">
+  <!-- Bootstrap -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script> 
+  <!-- print PDF -->
+  <!--https://stackoverflow.com/questions/34049956/generate-pdf-from-html-using-pdfmake-in-angularjs-->
+  <script type="text/javascript" src="js/html2canvas.js"></script>
+  <script type="text/javascript" src="js/pdfmake.min.js"></script>
+  <script type="text/javascript" src="js/vfs_fonts.js"></script>
+
+  <style type="text/css">
+      table {
+        width:100%;
+      }
+      .extrasmall {
+        min-width: :2%;
+        text-align: center;
+
+      }
+      .smallcell{
+        min-width: 10%;
+        text-align: center;
+
+      }
+      .bigcell {
+        min-width: 58%;
+        text-align: left;
+        padding-left: 5%;
+
+      }
+
+      table, th, td {
+         border: 1px solid black;
+         padding: 5px;
+
+      }
+      ul {
+      list-style: none;
+      }
+
+  </style>
+
+</head>
+<body>
+
+
+<nav class="navbar navbar-expand-sm bg-dark navbar-dark">
+  <ul class="navbar-nav">
+    <li class="nav-item">
+      <a class="nav-link" href="#"> Crea nuovo piano </a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" href="#/student"> Gestisci vecchio piano </a>
+    </li>
+  </ul>
+</nav>
+
+
+<ng-view></ng-view>
+<!-- Libraries Angular js -->
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.25/angular.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.25/angular-route.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/angular-filter/0.5.17/angular-filter.js"></script>
+
+<!-- Template -->
+<script type="text/ng-template" id="/curricula.html">
+  <table class="table table-bordered">
+    <tr ng-repeat="curriculum in curricula">
+      <td><h4>{{curriculum.title}}</h4></td>
+      <td> {{curriculum.desc}}</td>
+      <td><a href="#/curriculum/{{curriculum.id}}"> Scegli {{curriculum.id}}</a></td>
+    </tr>
+  </table>
+  {{status}}
+</script>
+<script type="text/ng-template" id="/curriculum.html">
+<div class="container-fluid">
+<h1> {{curriculumcourses.curriculum.title}}</h1>
+<ul class="list-group">
+  <li ng-repeat="g in curriculumcourses.groups track by $index" class="list-group-item list-group-flush">
+   <h4> {{g.id}}. Scegli {{g.n}} esami da {{g.cfu}} cfu tra: </h4>
+       <table>
+        <tr>
+          <th>codice</th>
+          <th>nome</th>
+          <th>anno</th>
+          <th>periodo</th>
+          <th>ssd</th>
+        </tr>
+       <tr  ng-repeat="c in g.courses |  orderBy:['year','semester'] ">
+        <td class="smallcell">  {{c.id}} </td>
+        <td class="bigcell">  <a href="{{c.url}}"  target="_blank"> {{c.name}}  </a> </td>
+        <td class="smallcell"> {{c.year}} </td>
+        <td class="smallcell">  {{c.semester}} </td>
+        <td class="smallcell"> {{c.ssd}} </td>
+        <td class="extrasmall"> <input type="checkbox" ng-model="studentcourses[c.id]"> </td>
+
+        </tr>
+        </table>
+   </li>
+</ul>  
+</br>
+<label> Matricola </label>
+<input type="text" ng-model="student.id">
+<label> Nome </label> <input type="text" ng-model="student.firstname">
+<label> Cognome:</label> <input type="text" ng-model="student.lastname">
+<input type="button"  value="valida il piano" ng-click="submitstudyplan()" >
+</div>
+{{status}}
+</script>
+<script type="text/ng-template" id="/studyplan.html">
+
+<div class="container-fluid" id="printpage">
+<h2> Corso di studi ingegneria informatica</h2>
+<h4> P.d.s individuale - A.A {{studyplan.curriculum.ac}}</h4>
+
+
+ <table class="table table-bordered">
+  <tr>
+    <th>matricola</th>
+    <th>nome</th>
+    <th>cognome</th>
+  </tr>
+  <tr>
+    <td>
+      {{studyplan.student.id}}
+    </td>
+    <td>
+     {{studyplan.student.firstname}}
+    </td>
+    <td>
+      {{studyplan.student.lastname}}
+    </td>
+  </tr>  
+ </table>
+
+
+ <table class="table table-bordered">
+  <tr>
+    <th>codice</th>
+    <th>titolo</th>
+    <th>cfu</th>
+    <th>ssd</th>
+    <th>anno</th>
+    <th>semestre</th>
+   
+  </tr>
+  <tr ng-repeat="c in studyplan.courses">
+    <td>
+      {{c.id}}
+    </td>
+    <td>
+      <a href="{{c.url}}"> {{c.name}} </a>
+    </td>
+    <td>
+      {{c.cfu}}
+    </td>
+    <td>
+      {{c.ssd}}
+    </td>
+    <td>
+      {{c.year}}
+    </td>
+    <td>
+      {{c.semester}}
+    </td>
+  </tr>
+</table>
+
+</div>
+<input type="button"  value="stampa pdf" ng-click="printstudyplan()" >
+{{status}}
+</script>
+
+<script type="text/ng-template" id ="/student.html">
+  <input type="text" ng-model="studyplan_id">
+  <input type="button"  value="recupera piano" ng-click="redirectStudyplan()">
+</script>
+
+<script>
+angular.module('app', ['ngRoute'])
+
+//---------------
+// Factory
+//---------------
+.factory('dataFactory', ['$http', function($http) {
+
+    var urlBase = 'http://localhost:5000';
+    var dataFactory = {};
+
+    dataFactory.getCurricula = function () {
+        return $http.get(urlBase + '/curriculum/');
+    };
+
+    dataFactory.setStudent = function(data) {
+      return $http.post(urlBase + '/student/', data);
+    }
+
+    dataFactory.getStudent = function(id) {
+      return $http.get(urlBase + '/student/' + id + '/');
+    }
+
+    dataFactory.getCurriculumCourses= function(curriculum_id) {
+      return $http.get(urlBase + '/curriculum/' + curriculum_id + '/courses/');
+    }
+
+    dataFactory.getStudyplan = function(studyplan_id) {
+        return $http.get(urlBase + '/studyplan/' + studyplan_id +'/');
+    };
+    dataFactory.setStudyplan = function (data) {
+        return $http.post(urlBase + '/studyplan/', data);
+    };
+    return dataFactory;
+}])
+
+.controller('curricula', ['$scope', 'dataFactory', 
+      function ($scope, dataFactory) {
+
+      $scope.curricula;
+
+      getCurricula();
+
+      function getCurricula() {
+          var res = dataFactory.getCurricula()
+          .then(function (response) {
+              $scope.status = '';
+              $scope.curricula = response.data.curricula;
+          }, function (error) {
+              $scope.status = 'Error:' + error.error;
+          });
+      };
+}])
+
+.controller('curriculum', ['$scope', '$routeParams','dataFactory','$location',
+      function ($scope, $routeParams, dataFactory, $location) {
+
+      $scope.curriculumcourses; //populate the course list with received data
+      $scope.studentcourses = {}; //arrayo of true|false: true if html checkbox is checked, false if unchecked.
+      $scope.studyplancourses = {};
+      $scope.studyplan_hidden=false;
+
+      $scope.student = { id:'', firstname: '', lastname: '' };
+
+      $scope.curriculum_id = $routeParams.id
+
+    
+      getCurriculumCourses($scope.curriculum_id);
+
+      function getCurriculumCourses(curriculum_id) {
+          dataFactory.getCurriculumCourses(curriculum_id)
+          .then(function (response) {
+              $scope.status = '';
+              $scope.curriculumcourses = response.data;
+          }, function (error) {
+              $scope.status = 'Error:' + error.error;
+          });
+      };
+
+      $scope.submitstudyplan = function () {
+          setStudent();
+          setStudyplan($scope.student.id);
+          redirectTo('/studyplan/'+$scope.student.id);
+      };
+  
+      function setStudent() {
+        var student_json = {
+          id: $scope.student.id,
+          firstname: $scope.student.firstname,
+          lastname: $scope.student.lastname
+        }
+        dataFactory.setStudent(student_json)
+        .then( function( response) {
+          $scope.status = 'Ok insert new student.';
+        }, function( error ) {
+          $scope.status = 'Error: ' + error.data.error;
+        })
+      };
+
+      function setStudyplan(id) {
+                           
+        var groups = [];
+        var allcourses = [];
+        var coursecounter = [];
+        for( var i=0; i < $scope.curriculumcourses.groups.length; i++ ){
+          coursecounter[i]=0;
+          var courses = [];
+          for( var k=0; k < $scope.curriculumcourses.groups[i].courses.length; k++) {
+            var course =  $scope.curriculumcourses.groups[i].courses[k];
+            //console.log("visited: " + course.name);
+            if( $scope.studentcourses[course.id] &&  $scope.studentcourses.hasOwnProperty(course.id) ) {
+                //console.log("add: " + course.name);
+                coursecounter[i]+=1;
+                courses.push({id: course.id}); //assemble json, part 1
+                allcourses.push({id: course.id});
+            }
+          } //end loop courses in a group
+          groups.push({id: $scope.curriculumcourses.groups[i].id, courses: courses }); //assemble json, part 2
+          // optional: give an alarm if too few courses have been selected
+  
+        }
+        //assemble json, part 3
+
+         var json_output = {
+          student:  $scope.student.id,
+          curriculum: $scope.curriculum_id ,
+          courses: allcourses
+        }
+
+        console.log(JSON.stringify(json_output));
+
+        dataFactory.setStudyplan(json_output)
+        .then(function (response) {
+            $scope.status = 'The study plan has been validated.';
+            $scope.studyplancourses = response.data;
+            $scope.studyplan_hidden=true;
+            
+        }, function(error) {
+            $scope.status = 'Error: ' + error.data.error;
+        });
+      };
+
+    function redirectTo(_url_) {
+      $location.path(_url_);
+
+    }
+}])
+.controller('studyplan', ['$scope', '$route','$routeParams','dataFactory',
+      function ($scope, $route, $routeParams, dataFactory) {
+
+      $scope.studyplan_id = $routeParams.id;
+      console.log("param id:"+  $scope.studyplan_id);
+
+      $scope.studyplan;
+
+      getStudyplan($scope.studyplan_id);
+
+
+
+      function getStudyplan(studyplan_id) {
+        dataFactory.getStudyplan(studyplan_id)
+        .then(function (response) {
+              $scope.status = '';
+              $scope.studyplan = response.data;
+          }, function (error) {
+              $scope.status = 'Error:' + error.error;
+          });
+      };
+
+      $scope.printstudyplan = function(){
+        html2canvas(document.getElementById('printpage')).then(canvas => {
+            var data = canvas.toDataURL();
+            var docDefinition = {
+                content: [{
+                    image: data,
+                    width: 500,
+                }]
+            };
+            pdfMake.createPdf(docDefinition).download("Studypan.pdf");
+        });
+      };
+
+}])
+.controller('student', ['$scope','$location',
+      function ($scope, $location) {
+
+      $scope.studyplan_id;
+
+      $scope.redirectStudyplan = function() {
+        $location.path('/studyplan/'+  $scope.studyplan_id);
+      }
+
+ 
+}])
+//---------------
+// Routes
+//---------------
+.config(function($routeProvider) {
+    $routeProvider
+    .when('/', {
+      templateUrl: '/curricula.html',
+      controller: 'curricula'
+    })
+    .when('/curriculum/:id', {
+
+      templateUrl: '/curriculum.html',
+      controller: 'curriculum'
+    })
+    .when('/studyplan/:id', {
+      templateUrl: '/studyplan.html',
+      controller: 'studyplan'
+    })
+    .when('/student', {
+      templateUrl: '/student.html',
+      controller: 'student',
+    })
+});
+</script>
+
+</body>
+</html>
