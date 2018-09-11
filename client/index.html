@@ -2,6 +2,8 @@
 <head>
   <title>Study plan</title>
    <meta charset="utf-8">
+  <!-- my css -->
+  <link rel="stylesheet" href="css/style.css" >
   <!-- Bootstrap -->
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
@@ -16,7 +18,7 @@
 
   <style type="text/css">
       table {
-        width:100%;
+      /*width:100%;*/
       }
       .extrasmall {
         min-width: :2%;
@@ -34,12 +36,19 @@
         padding-left: 5%;
 
       }
+       h4, h2 {
+        margin-top: 20px;
+        margin-bottom: 20px;
+      }
+      h2 {
+        text-align: center;
+      }
 
-      table, th, td {
+     /* table, th, td {
          border: 1px solid black;
          padding: 5px;
 
-      }
+      }*/
       ul {
       list-style: none;
       }
@@ -80,13 +89,14 @@
   {{status}}
 </script>
 <script type="text/ng-template" id="/curriculum.html">
-<div class="container-fluid">
-<h1> {{curriculumcourses.curriculum.title}}</h1>
+<div class="container">
+<h2> {{curriculumcourses.curriculum.title}}</h2>
 <ul class="list-group">
   <li ng-repeat="g in curriculumcourses.groups track by $index" class="list-group-item list-group-flush">
    <h4> {{g.id}}. Scegli {{g.n}} esami da {{g.cfu}} cfu tra: </h4>
-       <table>
+       <table  class="table table-bordered">
         <tr>
+          <th></th>
           <th>codice</th>
           <th>nome</th>
           <th>anno</th>
@@ -94,25 +104,43 @@
           <th>ssd</th>
         </tr>
        <tr  ng-repeat="c in g.courses |  orderBy:['year','semester'] ">
+        <td class="extrasmall"> <input type="checkbox" ng-model="studentcourses[c.id]"> </td>
         <td class="smallcell">  {{c.id}} </td>
         <td class="bigcell">  <a href="{{c.url}}"  target="_blank"> {{c.name}}  </a> </td>
         <td class="smallcell"> {{c.year}} </td>
         <td class="smallcell">  {{c.semester}} </td>
         <td class="smallcell"> {{c.ssd}} </td>
-        <td class="extrasmall"> <input type="checkbox" ng-model="studentcourses[c.id]"> </td>
 
         </tr>
         </table>
    </li>
 </ul>  
 </br>
-<label> Matricola </label>
-<input type="text" ng-model="student.id">
-<label> Nome </label> <input type="text" ng-model="student.firstname">
-<label> Cognome:</label> <input type="text" ng-model="student.lastname">
-<input type="button"  value="valida il piano" ng-click="submitstudyplan()" >
+
+<form class="form-row">
+<legend> Student data: </legend>
+ 
+
+<label class="form-group col-md-1"> Matricola: </label>
+<input class="form-group col-md-3" type="text" ng-model="student.id">
+
+<label class="form-group col-md-1"> Nome: </label>
+<input class="form-group col-md-3" type="text" ng-model="student.firstname">
+
+<label class="form-group col-md-1"> Cognome: </label> 
+<input class="form-group col-md-3" type="text" ng-model="student.lastname">
+
+</form>
+<div class="row">
+    <div class="col">
+    <input type="button" value="Home" class="col btn" ng-click="goHome()"> 
+    </div>
+    <div class="col">
+      <input type="button"  value="valida il piano" ng-click="submitstudyplan()" class="btn btn-primary col" >
+    </div>
 </div>
-{{status}}
+</div>
+ {{status}} 
 </script>
 <script type="text/ng-template" id="/studyplan.html">
 
@@ -249,6 +277,8 @@ angular.module('app', ['ngRoute'])
 
       $scope.curriculum_id = $routeParams.id
 
+      var valid_student, valid_studyplan = false;
+
     
       getCurriculumCourses($scope.curriculum_id);
 
@@ -263,30 +293,41 @@ angular.module('app', ['ngRoute'])
       };
 
       $scope.submitstudyplan = function () {
-          setStudent();
-          setStudyplan($scope.student.id);
+        setStudent();
+        setStudyplan($scope.student.id)
+        if(valid_student===true && valid_studyplan===true){
           redirectTo('/studyplan/'+$scope.student.id);
+        }
+                
       };
   
       function setStudent() {
+        if( $scope.student.id.length !== 7){
+          alert("Warning: 'Matricola' expects 7 charsets");
+          valid_student = false;
+          return;
+        }
+        valid_student=true;
+
         var student_json = {
           id: $scope.student.id,
           firstname: $scope.student.firstname,
           lastname: $scope.student.lastname
         }
+
         dataFactory.setStudent(student_json)
         .then( function( response) {
-          $scope.status = 'Ok insert new student.';
+           $scope.status = '';
         }, function( error ) {
           $scope.status = 'Error: ' + error.data.error;
-        })
+        }); 
       };
 
       function setStudyplan(id) {
                            
         var groups = [];
         var allcourses = [];
-        var coursecounter = [];
+        var coursecounter=[];
         for( var i=0; i < $scope.curriculumcourses.groups.length; i++ ){
           coursecounter[i]=0;
           var courses = [];
@@ -300,13 +341,25 @@ angular.module('app', ['ngRoute'])
                 allcourses.push({id: course.id});
             }
           } //end loop courses in a group
-          groups.push({id: $scope.curriculumcourses.groups[i].id, courses: courses }); //assemble json, part 2
           // optional: give an alarm if too few courses have been selected
-  
+
+          groups.push({id: $scope.curriculumcourses.groups[i].id, courses: courses }); //assemble json, part 2
+
         }
         //assemble json, part 3
+        for( index = 0; index < coursecounter.length; index++){
+          if( coursecounter[index] < $scope.curriculumcourses.groups[index].n ) {
 
-         var json_output = {
+            alert("group " + String($scope.curriculumcourses.groups[index].name) + "has " + String(coursecounter) + " courses but " + String($scope.curriculumcourses.groups[index].n) + " expected");
+            
+            valid_studyplan = false;
+            return;
+          }
+        }
+
+        valid_studyplan = true;
+
+        var json_output = {
           student:  $scope.student.id,
           curriculum: $scope.curriculum_id ,
           courses: allcourses
@@ -321,7 +374,7 @@ angular.module('app', ['ngRoute'])
             $scope.studyplan_hidden=true;
             
         }, function(error) {
-            $scope.status = 'Error: ' + error.data.error;
+            $scope.status = 'Error: ' + error.data.error; 
         });
       };
 
@@ -329,6 +382,9 @@ angular.module('app', ['ngRoute'])
       $location.path(_url_);
 
     }
+    $scope.goHome = function() {
+        $location.path('/');
+    };
 }])
 .controller('studyplan', ['$scope', '$route','$routeParams','dataFactory',
       function ($scope, $route, $routeParams, dataFactory) {
@@ -363,6 +419,10 @@ angular.module('app', ['ngRoute'])
             };
             pdfMake.createPdf(docDefinition).download("Studypan.pdf");
         });
+      };
+
+      $scope.goHome = function() {
+        $location.path('/');
       };
 
 }])

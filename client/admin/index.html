@@ -2,28 +2,14 @@
 <head>
   <title>Admin curricula unifi</title>
   <meta charset="utf-8">
+    <!-- my css -->
+  <link rel="stylesheet" href="../css/style.css" >
   <!-- Bootstrap -->
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script> 
-
-  <style type="text/css">
-          table, th, td {
-         border: 1px solid black;
-      }
-      .error{
-        color: red;
-      }
-
-      .mystyle table td {
-        text-align: center;
-      }
-      input[type=number] {
-        max-width: 100px;
-      }
-  </style>
 
 </head>
 
@@ -33,11 +19,7 @@
 <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
   <ul class="navbar-nav">
    <li class="nav-item">
-      <a class="nav-link active" href="/">Home</a>
-    </li>
-
-    <li class="nav-item">
-      <a class="nav-link" href="#">Constraint</a>
+      <a class="nav-link active" href="#">Home</a>
     </li>
     <li class="nav-item">
       <a class="nav-link" href="#curriculum">Curricula</a>
@@ -60,259 +42,431 @@
 <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.25/angular.min.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.25/angular-route.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-filter/0.5.17/angular-filter.js"></script>
-<!--<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.25/angular-sanitize.js"></script>-->
-<!--https://github.com/a8m/angular-filter#get-started-->
-<!--<script src="https://code.angularjs.org/1.2.13/angular-cookies.js"></script>-->
 
+<script type="text/ng-template" id="/home.html">
+<div class="container">
+  <div class="row">
+    <label id="curriculum">Curriculum:</label>
+    <select ng-model="curriculum" class="custom-select" id="curriculum"> 
+      <option ng-repeat="x in curricula" value="{{x.id}}">
+      {{x.title}} 
+      </option>
+    </select>
+  </div>
+  <br>
+  <div class="row">
+    <input type="button" value="view detail" ng-click="getCurriculumCourses()" class="btn btn-block">
+    <span class="error"> {{status}}</span>
+  </div>
+  <div class="row">
+    <ul class="list-group col">
+    <h4> <a href="#/curriculum/view/{{curriculumcourses.curriculum.id}}"> {{curriculumcourses.curriculum.title}} </a> </h4>  
+      <li ng-repeat="g in curriculumcourses.groups" class="list-group-item list-group-flush">  
+      <h4> <a href="#/group/view/{{g.id}}">  {{g.name}} </a> ( scegli {{g.n}} corsi da {{g.cfu}} cfu )  </h4>
+        <table  class="table table-bordered">
+          <tr>
+            <th>Code</th> <th>Name</th> <th>CFU</th>
+          </tr>
+          <tr ng-repeat="c in g.courses">
+            <td class="smallcell"> {{c.id}} </td>
+            <td class="bigcell"> {{c.name}} </td>
+            <td class="smallcell"> {{c.cfu}}</td>
+          </tr>
+        </table>
+      </li>
+    </ul>
+  </div>
+</div>
+</script>
+<!--
+<script type="text/ng-template" id="/curriculumgroups.html">
 
-<script type="text/ng-template" id="/constraints.html">
 <div class="container-fluid"> <br>
+<h4> curriculum: {{curriculum_title}}  </h4>
+<table>
+  <caption> {{curriculum_title}} groups settings </caption>
+  <tr ng-repeat="g in inactive_groups">
+    <td> {{g.name}} </td>
+    <td> <input type="button" value="inactive" ng-click="addGroup(g)" style="background-color: #f44336;"></td>
+  </tr>
+  <tr ng-repeat="g in active_groups">
+    <td>{{g.name}}</td>
+    <td> <input type="button" value="active" ng-click="removeGroup(g)"  style="background-color: #4CAF50;"></td>
+  </tr>
+</table>
 
-<form class="form-group">
-  <fieldset>
-    <legend>Curriculum data:</legend>
 
-      <label for="curriculumid"> Curriculum: </label>
-      <select ng-model="curriculum" class="custom-select" id="curriculumid">  
-        <option ng-repeat="x in curricula" value="{{x.id}}"> 
-         curriculum id: {{x.id}} ({{x.title}})
+<input type="button" value="update groups" ng-click="setCurriculumGroups()" class="btn btn-primary"> </br>
+<p>
+all group:<br>
+{{all_groups}}
+</p>
+<p>
+active group:
+{{active_groups}}
+</p>
+<p>
+  inactive groups:
+  {{inactive_groups}}
+</p>
+</div>
+
+
+
+</script>
+<script type="text/ng-template" id="/groupcourses.html">
+<div class="container-fluid"><br>
+
+<h4> </h4>
+<table>
+  <tr ng-repeat="c in active_courses">
+    <td> {{c.name}} </td> 
+    <td style="background-color: #4CAF50;"> active </td> 
+    <td> <input type="button" value="deactivate" ng-click="removeCourse(c)" class="btn btn-primary"> </td>
+  </tr>
+  <tr ng-repeat="c in inactive_courses">
+    <td> {{c.name}} </td>
+    <td style="background-color: #f44336;"> inactive </td> 
+    <td> <input type="button" value="activate" ng-click="addCourse(c)" class="btn btn-primary"> </td>
+  </tr>
+
+
+</table>
+
+<input type="button" value="update courses" ng-click="setGroupsCourses()" class="btn btn-primary"/> </br>
+
+
+</div>
+
+
+corsi:
+{{courses}}
+corsi attivi:
+{{active_courses}}
+inattivi:
+{{inactive_courses}}
+</script>
+-->
+<script type="text/ng-template" id="/curriculum.html">
+<div class="container">
+  <h2>Curriculum management</h2>
+  <form class="form-row">
+    <legend> Create new curriculum </legend>
+    <label  class="form-group col-md-2" for="title"> Title: </label>
+    <input  class="form-group col-md-10" type="text" ng-model="title" id="title"> 
+    <br>
+    <label  class="form-group col-md-2" for="description"> Description: </label>
+    <textarea  class="form-group col-md-10" ng-model="desc" rows="5" id="description"></textarea> 
+    <br>
+    <label class="form-group col-md-2" for="academiyear"> Academic year: </label> 
+     <select ng-model="ac" class="form-group col-md-10 custom-select" id="academicyear">  
+        <option ng-repeat="x in academicyears" value="{{x.id}}"> 
+         {{x.id}}
         </option>
-      </select>
+    </select>
+    <br>
+    <span class="col-md-2"></span>
+    <input type="button" value="add curriculum" ng-click="setCurriculum()" class="btn btn-success  col-md-10">
+  </form>
 
-      <label for="courseid"> Course: </label>
-      <select ng-model="course" class="custom-select" id="courseid">  
-        <option ng-repeat="x in courses" value="{{x.id}}">
-          {{x.id}} | {{x.name}}
-        </option>
-      </select>
+  <label class="error">{{status}}</label>
 
-      <label for="groupid"> Group: </label>
-      <select ng-model="group" class="custom-select" id="groupid">  
-          <option ng-repeat="x in groups" value="{{x.id}}">
-            gruppo id: {{x.id}} ({{x.n}} esami da {{x.cfu}} cfu)
-          </option>
-      </select>
+  <table class="table table-bordered">
+    <tr>
+      <th style="text-align:left">Curriculum title</th> <th>a.a</th> <th></th> <th></th> <th></th>
+    </tr>
+    <tr ng-repeat="x in curricula track by $index">
+      <td class="bigcell"> {{x.title}} </td>
+      <td class="smallcell"> {{x.ac}} </td>
+      <td> <input type="button" ng-click="updateCurriculum(x.id)" value="update" class="btn btn-outline-info">  </td>
+      <td> <input type="button" ng-click="deleteCurriculum(x.id)" value="delete" class="btn btn-outline-danger">  </td>
+      <td> <input type="button" ng-click="viewCurriculum(x.id)" value="view groups" class="btn btn-primary">  </td>
+    </tr>
+  </table>
+</div>
+</script>
 
-      <input type="button" value="add constraint" ng-click="setConstraint()" class="btn btn-primary"/>
+<script type="text/ng-template" id="/viewcurriculum.html">
+<div class="container"><br>
+  <h2> {{curriculumdetails.curriculum.title}} </h2>
 
-    </fieldset>
-</form>
+  <table class="table table-bordered">
+    <tr>
+      <th style="text-align:left">Group name</th> <th>Number of courses</th> <th>CFU / course</th>
+    </tr>
+    <tr ng-repeat="g in curriculumdetails.groups">
+      <td class="bigcell"> {{g.name}} </td>
+      <td class="smallcell"> {{g.n}} </td>
+      <td class="smallcell"> {{g.cfu}}</td>
+    </tr>
+  </table>
 
-<label class="error">{{status}}</label>
-
-   
-<div id="accordion" ng-repeat="block in studyplans | orderBy:'studyplan[0].curriculum'">
-
-    <button type="button" data-toggle="collapse" data-target="#curriculum-{{block.studyplan[0].curriculum}}" class="btn btn-light btn-lg btn-block"> 
-    {{block.studyplan[0].curriculum}}: {{block.studyplan[0].title}}
-
-    <div id="curriculum-{{block.studyplan[0].curriculum}}" class="collapse show" data-parent="#accordion">
-       
-        <ul class="list-group">
-          <li ng-repeat="gr in block.studyplan[0].groups track by $index" class="list-group-item list-group-flush">
-            Scegli {{gr.n}} esami da {{gr.cfu}} tra (id {{gr.id}})
-           
-            <table class="table table-bordered">
-              <tr>
-                <th>ID</th>
-                <th>Name</th>
-                <th>SSD</th>
-                <th>CFU</th>
-                <th>URL</th>
-              </tr>
-
-              <tr  ng-repeat="c in gr.courses">
-                <td> {{c.code}} </td>  
-                <td> {{c.name}}  </td> 
-                <td> {{c.ssd}}  </td> 
-                <td> {{c.cfu}} </td> 
-                <td> <a href="{{c.url}}"  target="_blank"> {{c.url}}  </a>  </td>
-                <td> <input type="button" ng-click="deleteConstraint(c.key)" value="delete" class="btn btn-danger"> </td>
-              </tr>
-            </table>
-
-          </li>
-        </ul>
+  <div class="row">
+    <div class="col">
+      <input type="button" value="Home" ng-click="goHome()" class="btn col">
+    </div>
+    <div class="col">
+      <input type="button" value="Modify groups configuration" ng-click="configCurriculum()" class="btn btn-primary col" style="float:right">
     </div>
   </div>
-
-</div>
-
-
-
-</script>
-<script type="text/ng-template" id="/curriculum.html">
-<div class="container-fluid"><br>
-
-<form class="form-group">
-  <fieldset>
-    <legend>Curriculum data:</legend>
-
-      <label for="title"> Titolo: </label>
-      <input type="text" ng-model="title" class="form-control" id="title"> </br>
-
-      <label for="description"> Descrizione: </label>
-      <textarea ng-model="desc" class="form-control" rows="5" id="description"></textarea> </br>
-
-      <label for="academiyear"> Anno accademico: </label> 
-       <select ng-model="ac" class="custom-select" id="academicyear">  
-          <option ng-repeat="x in academicyears.academicyears" value="{{x.id}}"> 
-           {{x.id}}
-          </option>
-      </select>
-      </br>
-
-      <input type="button" value="add curriculum" ng-click="setCurriculum()" class="btn btn-primary"/> </br>
-
-  </fieldset>
-</form>
-
-<label class="error">{{status}}</label>
-
-<table class="table table-bordered">
-  <tr ng-repeat="x in curricula.curricula">
-    <td> {{x.title}} </td>
-    <td> {{x.ac}} </td>
-    <td> <input type="button" ng-click="updateCurriculum(x.id)" value="update" class="btn btn-info">  </td>
-    <td> <input type="button" ng-click="deleteCurriculum(x.id)" value="delete" class="btn btn-danger">  </td>
-  </tr>
-</table>
-
-</div>
-
-</script>
-<script type="text/ng-template" id="/group.html">
-<div class="container-fluid"><br>
-
-<form class="form-group">
-  <fieldset>
-    <legend>Group data:</legend>
-
-      <label for="ncourse"> Number of courses in this group:  </label>
-      <input type="number" ng-model="n" min="1" max="11" step="1" class="form-control" id="ncourse" ></br>
-
-      <label for="cfu"> Cfu per course:  </label>
-      <input type="number" ng-model="cfu" min="6" max="9" step="3" class="form-control" id="cfu"> </br>
-
-      <input type="button" value="add group" ng-click="setGroup()" class="btn btn-primary"/>
-
-  </fieldset>
-</form>
-
-<label class="error">{{status}}</label>
-
-
-<table class="table table-bordered">
-  <tr>
-    <th> Group ID </th>
-    <th> N courses</th>
-    <th> CFU </th>
-  </tr>
-  <tr ng-repeat="x in groups.groups">
-    <td> {{x.id}} </td>
-     <td> {{x.n}} </td>
-     <td> {{x.cfu}} </td>
-     <td>  <input type="button" ng-click="updateGroup(x.id)" value="update" class="btn btn-info"> </td>
-     <td> <input type="button" ng-click="deleteGroup(x.id)" value="delete" class="btn btn-danger">  </td>
-  </tr>
-</table>
-
 </div>
 </script>
-<script type="text/ng-template" id="/course.html">
-<div class="container-fluid"><br>
 
-<form class="form-inline">
+<script type="text/ng-template" id="/configcurriculum.html">
+<div class="container"><br>
+  <h2> {{curriculum.title}} </h2>
 
-      <label for="codeid" class="mr-sm-1">  Codice: </label>
-      <input type="text" ng-model="code" class="form-control  form-control-sm  mb-1 mr-sm-4">
-
-      <label for="nameid" class="mr-sm-2">  Nome: </label>
-      <input type="text" ng-model="name" class="form-control   form-control-sm mb-2 mr-sm-4">
-
-      <label for="cfuid" class="mr-sm-2">  CFU: </label>
-      <input type="number" ng-model="cfu"  min="3" max="12" step="3" class="form-control  form-control-sm  mb-2 mr-sm-4">
-
-
-
-      <label for="ssdid" class="mr-sm-2">  SSD:  </label>
-       <select ng-model="ssd"  class="custom-select  mb-2 mr-sm-4">  
-          <option value="ING-INF/05"> ING-INF/05 </option>
-          <option value="ING-INF/04"> ING-INF/04 </option>
-          <option value="ING-INF/03"> ING-INF/03 </option>
-          <option value="ING-INF/01"> ING-INF/01 </option>
-          <option value="MAT/08"> MAT/08 </option>
-          <option value="MAT/09"> MAT/09 </option>
-          <option value="INF/01"> INF/01 </option>
-
-      </select>
-</form>
-<form class="form-inline">
-      <label for="acid" class="mr-sm-2">  Anno accademico:  </label>
-       <select ng-model="ac" class="custom-select  mb-2 mr-sm-4">  
-          <option ng-repeat="x in academicyears.academicyears" value="{{x.id}}"> 
-           {{x.id}}
-          </option>
-      </select>
-
-        <label for="yearid" class="mr-sm-2"> Anno di programmazione:  </label>
-      <input type="number" ng-model="year"  min="0" max="2" step="1" class="form-control form-control-sm  mb-2 mr-sm-4">
-
-      <label for="semesterid" class="mr-sm-2"> Periodo:  </label>
-      <input type="number" ng-model="semester"  min="0" max="2" step="1" class="form-control form-control-sm  mb-2 mr-sm-4">
-</form>
-<form class="form-group">
-      <label for="urlid">  URL: </label>
-      <input type="text" ng-model="url" class="form-control form-control-sm" id="urlid">
-</form>
-      <input type="button" value="add course" ng-click="setCourse()" class="btn btn-primary"/>
-
-<label class="error"> {{status}}</label>
- 
-<h2>Courses </h2>
-<p> Search: <input type="text" ng-model="search.id"/> </p>
-<table class="table table-bordered">
+  <table class="table table-bordered">
     <tr>
-    <th>code</th>
-    <th>name</th>
-    <th>cfu</th>
-    <th>ssd</th>
-    <th>ac</th>
-    <th>year</th>
-    <th>semester</th>
-    <th>url</th>
+      <th></th><th>Name</th><th>Courses number</th><th>CFU / course</th>
+    </tr>
+    <tr ng-repeat="g in groups">  
+      <td class="picocell"> <input type="checkbox" ng-model="checkedgroups[g.id]"> </td>
+      <td class="bigcell"> {{g.name}} </td>
+      <td class="smallcell"> {{g.n}} </td>
+      <td class="smallcell"> {{g.cfu}} </td>
+    </tr>
+  </table>
 
-  </tr>
-  <tr  ng-repeat="x in courses.courses | filter: search | orderBy: 'name' ">
-    <td> {{x.id}} </td>
-    <td> {{x.name}} </td>
-    <td> {{x.cfu}} </td>
-    <td> {{x.ssd}}  </td>
-    <td> {{x.ac}} </td>
-    <td> {{x.year}} </td> 
-    <td> {{x.semester}}  </td>
-    <td> <a href="{{x.url}}" target="_blank"> {{x.url}} </a> </td>
-    <td> <input type="button" value="update course" ng-click="updateCourse(x.id)" class="btn btn-info"></td>
-    <td> <input type="button" value="delete course" ng-click="deleteCourse(x.id)" class="btn btn-danger"></td>
+  <div class="row">
+    <div class="col">
+      <input type="button" value="Home" ng-click="goHome()" class="btn col">
+    </div>
+    <div class="col">
+      <input type="button" value="Save groups configuration" ng-click="setCurriculumGroups()" class="btn btn-primary col" style="float:right">
+    </div>
+    <span class="error"> {{status}}</span>
+  </div>
+</div>
+</script>
 
-  </tr>
-</table>
+<script type="text/ng-template" id="/group.html">
+<div class="container">
+  <h2> Group management </h2>
+  <form class="form-row">    
+    <legend> Create new group: </legend> 
+    <br> 
+    <label class="form-group col-md-3"> Group name:  </label>
+    <input class="form-group col-md-9" type="string" ng-model="name">
+    <br>
+    <label class="form-group col-md-3" for="ncourse"> Number of courses in this group:  </label>
+    <div class="form-group col-md-9">
+     <input type="number" ng-model="n" min="1" max="11" step="1"  id="ncourse" >
+    </div>
+    <br>
+    <label class="form-group col-md-3"  for="cfu"> Cfu per course:  </label>
+    <div class="form-group col-md-9">
+      <input type="number" ng-model="cfu" min="6" max="9" step="3" id="cfu"> 
+    </div>
+    <br>
+    <span class="col-md-3"></span>
+    <input type="button" value="Add group" ng-click="setGroup()"  class="col-md-9 btn btn-success">
+  </form>
+
+  <label class="error">{{status}}</label>
+
+  <table class="table table-bordered">
+    <tr>
+      <th> Group ID </th>
+      <th> name </th>
+      <th> N courses</th>
+      <th> CFU </th>
+    </tr>
+    <tr ng-repeat="x in groups.groups">
+      <td> {{x.id}} </td>
+      <td> {{x.name}}</td>
+       <td> {{x.n}} </td>
+       <td> {{x.cfu}} </td>
+       <td>  <input type="button" ng-click="updateGroup(x.id)" value="update" class="btn btn-outline-info"> </td>
+       <td> <input type="button" ng-click="deleteGroup(x.id)" value="delete" class="btn btn-outline-danger">  </td>
+      <td> <input type="button" ng-click="viewGroup(x.id)" value="config" class="btn btn-primary">  </td>
+    </tr>
+  </table>
+</div>
+</script>
+
+<script type="text/ng-template" id="/configgroup.html">
+<div class="container"><br>
+  <h2> {{group.name}} </h2>
+  <table  class="table table-bordered">
+    <tr>
+      <th> </th> <th> Code </th> <th style="text-align:left"> Name </th> <th> CFU </th>
+    </tr>
+    <tr ng-repeat="c in courses">  
+      <td class="picocell"> <input type="checkbox" ng-model="checkedcourses[c.id]"> </td>
+      <td class="smallcell"> {{c.id}} </td>
+      <td class="bigcell"> {{c.name}} </td>
+      <td class="smallcell"> {{c.cfu}} </td>
+    </tr>
+  </table>
+
+  <div class="row">
+    <div class="col">
+      <input type="button" value="Home" ng-click="goHome()" class="btn col">
+    </div>
+    <div class="col">
+      <input type="button" value="Save courses configuration" ng-click="setGroupsCourses()" class="btn btn-primary col" style="float:right">
+    </div>
+  </div>
+</div>
+</script>
+<script type="text/ng-template" id="/viewgroup.html">
+<div class="container"><br>
+  <h2> {{group_name}} </h2>
+
+  <table  class="table table-bordered">
+    <tr>
+      <th>Code</th> <th style="text-align:left">Name</th> <th>CFU</th>
+    </tr>
+    <tr ng-repeat="c in courses">
+      <td class="smallcell"> {{c.id}} </td>
+      <td class="bigcell"> {{c.name}} </td>
+      <td class="smallcell"> {{c.cfu}}</td>  
+    </tr>
+  </table>
+
+  <div class="row">
+    <div class="col">
+      <input type="button" value="Home" ng-click="goHome()" class="btn col">
+    </div>
+    <div class="col">
+      <input type="button" value="Modify courses configuration" ng-click="configGroup()" class="btn btn-primary col" style="float:right">
+    </div>
+  </div>
+</div>
+</script>
+<!--  form-control-sm mb-2 mr-sm-4"-->
+
+<script type="text/ng-template" id="/course.html">
+<div class="container">
+
+<h2>Manage courses </h2>
+
+  <form>
+    <legend>Create new course:</legend>
+    <div class="row">
+
+      <label for="codeid" class="col-sm-1">  Code: </label>
+      <input type="text" ng-model="code" class="form-control col-sm-2">
+
+      <label for="nameid" class="col-sm-1">  Name: </label>
+      <input type="text" ng-model="name" class="form-control col-sm-8">
+
+    </div>
+    <br>
+    <div class="row">
+
+      <label for="cfuid" class="col-sm-1">  CFU: </label>
+      <input type="number" ng-model="cfu"  min="3" max="12" step="3" class="form-control  col-sm-2">
+
+      <label for="ssdid" class="col-sm-1">  SSD:  </label>
+      <select ng-model="ssd"  class="custom-select col-sm-2">  
+        <option value="ING-INF/05"> ING-INF/05 </option>
+        <option value="ING-INF/04"> ING-INF/04 </option>
+        <option value="ING-INF/03"> ING-INF/03 </option>
+        <option value="ING-INF/01"> ING-INF/01 </option>
+        <option value="MAT/08"> MAT/08 </option>
+        <option value="MAT/09"> MAT/09 </option>
+        <option value="INF/01"> INF/01 </option>
+      </select>
+
+      <label for="yearid" class="col-sm-1"> Year: </label>
+      <input type="number" ng-model="year"  min="0" max="2" step="1" class="form-control col-sm-2">
+
+      <label for="semesterid" class="col-sm-1"> Semester:  </label>
+      <input type="number" ng-model="semester"  min="0" max="2" step="1" class="form-control col-sm-2">
+
+    </div>
+    <br>
+    <div class="row">
+
+      <label for="acid" class="col-sm-1">  A.A: </label>
+       <select ng-model="ac" class="custom-select col-sm-2">  
+          <option ng-repeat="x in academicyears.academicyears" value="{{x.id}}"> 
+           {{x.id}}
+          </option>
+      </select>
+
+      <label for="urlid" class="col-sm-1">  URL: </label>
+      <input type="text" ng-model="url" class="form-control col-sm-8" id="urlid">
+
+    </div>
+    <br>
+    <div class="row">
+      <span class="col-sm-4"></span>
+      <input type="button" value="add course" ng-click="setCourse()" class="btn btn-success col-sm-8"/>
+    </div>
+  </form>
+
+  <span class="error"> {{status}} </span>
+ 
+  <p> Search: <input type="text" ng-model="search.id"/> </p>
+  <table class="table table-bordered">
+    <tr>
+      <th>code</th>
+      <th>name</th>
+      <th>cfu</th>
+      <th>ssd</th>
+      <th>ac</th>
+      <th>year</th>
+      <th>semester</th>
+      <th>url</th>
+    </tr>
+    <tr  ng-repeat="x in courses.courses | filter: search | orderBy: 'name' ">
+      <td> {{x.id}} </td>
+      <td> {{x.name}} </td>
+      <td> {{x.cfu}} </td>
+      <td> {{x.ssd}}  </td>
+      <td> {{x.ac}} </td>
+      <td> {{x.year}} </td> 
+      <td> {{x.semester}}  </td>
+      <td> <a href="{{x.url}}" target="_blank"> {{x.url}} </a> </td>
+      <td> <input type="button" value="update course" ng-click="updateCourse(x.id)" class="btn btn-info"></td>
+      <td> <input type="button" value="delete course" ng-click="deleteCourse(x.id)" class="btn btn-danger"></td>
+    </tr>
+  </table>
 </script>
 <script type="text/ng-template" id="/academicyear.html">
-accademic year: <input type="string" ng-model="id" placeholder="2018/2019"/></br>
-start: <input type="date" ng-model="start"/> </br>
-end:  <input type="date" ng-model="end"/> </br>
-<input type="button" value="add accademic year" ng-click="setAcademicyear()" class="btn btn-primary"/>
-{{status}}
-<br>
+<div class="container">
 
-<ul>
-  <li ng-repeat="x in academicyears.academicyears">
-    id: {{x.id}} | start: {{x.start}} |  end: {{x.end}} 
-    <input type="button" ng-click="updateAcademicyear(x.id)" value="update" class="btn btn-info">
-    <input type="button" ng-click="deleteAcademicyear(x.id)" value="delete" class="btn btn-danger"> 
-  </li>
-</ul>
+<h2> Manage academic year </h2>
+
+  <form>
+    <legend>Create new academic year:</legend>
+    <br>
+    <div class="row">
+
+      <label for="acid" class="col-sm-2">  Academic year: </label>
+      <input type="string" ng-model="id" placeholder="2018-2019" id="acid" class="col-sm-2">
+
+      <label for="start" class="col-sm-1">  start: </label>
+      <input type="date" ng-model="start" id="start" class="col-sm-3">
+
+      <label for="end" class="col-sm-1">  end: </label>
+      <input type="date" ng-model="end" id="end" class="col-sm-3">
+    </div>
+    <br>
+    <div class="row">
+      <span class="col-sm-9"></span>
+      <input type="button" value="add academic year" ng-click="setAcademicyear()" class="btn btn-success col-sm-3">
+    </div>
+  </form>
+    
+
+  <table class="table table-bordered">
+    <tr>
+      <tr>
+        <th> id </th> <th> start </th> <th> end </th> 
+      </tr>
+      <tr  ng-repeat="x in academicyears">
+        <td> {{x.id}}  </td>
+        <td> {{x.start}}   </td>
+        <td> {{x.end}}  </td>
+        <td> <input type="button" ng-click="updateAcademicyear(x.id)" value="update" class="btn btn-info"> </td>
+        <td> <input type="button" ng-click="deleteAcademicyear(x.id)" value="delete" class="btn btn-danger">  </td>
+    </tr>
+  </table>
+</div>
 </script>
 <!--https://weblogs.asp.net/dwahlin/using-an-angularjs-factory-to-interact-with-a-restful-service-->
 <script>
@@ -406,30 +560,6 @@ angular.module('admin', ['ngRoute','angular.filter'])
          { headers: { 'Authorization':  'Basic ' + btoa(myauth.user + ":" + myauth.passord)}}
         );
     };
-
-    /** CONSTRAINTS  **/
-    
-    dataFactory.getConstraints = function () {
-        return $http.get(urlBase+'/constraints/');
-    };
-
-    dataFactory.setConstraint = function (json_constraint) {
-        return $http.post(urlBase+'/constraint/', json_constraint,
-           { headers: { 'Authorization':  'Basic ' + btoa(myauth.user + ":" + myauth.passord)}}
-          );
-    };
-
-    dataFactory.deleteConstraint = function (id) {
-        return $http.delete(urlBase + '/constraint/' + id +'/' ,
-           { headers: { 'Authorization':  'Basic ' + btoa(myauth.user + ":" + myauth.passord)}}
-          );
-    };
-
-    /** STUDY PLAN **/
-    dataFactory.getStudyplan = function (id) {
-        return $http.get(urlBase+'/studyplan/'+ id +'/');
-    };
-
     
     /** academicyear **/
     dataFactory.getAcademicyear = function () {
@@ -453,105 +583,57 @@ angular.module('admin', ['ngRoute','angular.filter'])
           );
     };
 
+        /** CONSTRAINTS  **/
+    
+    dataFactory.getGroupsCourses = function (group_id) {
+        return $http.get(urlBase+'/group/' + group_id + '/courses/');
+    };
+
+    dataFactory.setGroupsCourses = function (group_id, json_constraint) {
+        return $http.post(urlBase+'/group/' + group_id + '/courses/', json_constraint,
+           { headers: { 'Authorization':  'Basic ' + btoa(myauth.user + ":" + myauth.passord)}}
+          );
+    };
+
+    dataFactory.deleteGroupsCourses = function (group_id, course_id) {
+        return $http.delete(urlBase + '/group/' + group_id + '/courses/' + course_id + '/' ,
+           { headers: { 'Authorization':  'Basic ' + btoa(myauth.user + ":" + myauth.passord)}}
+          );
+    };
+
+
+
+    dataFactory.getCurriculumGroups = function (curriculum_id) {
+        return $http.get(urlBase+'/curriculum/' + curriculum_id + '/groups/');
+    };
+
+    dataFactory.setCurriculumGroups = function (curriculum_id, json_constraint) {
+        return $http.put(urlBase+'/curriculum/' + curriculum_id + '/groups/', json_constraint,
+           { headers: { 'Authorization':  'Basic ' + btoa(myauth.user + ":" + myauth.passord)}}
+          );
+    };
+
+    dataFactory.deleteCurriculumGroups = function (curriculum_id, group_id) {
+        return $http.delete(urlBase + '/curriculum/' + curriculum_id + '/groups/' + group_id + '/' ,
+           { headers: { 'Authorization':  'Basic ' + btoa(myauth.user + ":" + myauth.passord)}}
+          );
+    };
+
+
+    dataFactory.getCurriculumCourses = function (curriculum_id) {
+        return $http.get(urlBase+'/curriculum/' + curriculum_id + '/courses/');
+    };
+
+
     return dataFactory;
 }])
 
 //---------------
 // Controllers
 //---------------
-.controller('constraints', ['$scope', '$routeParams','dataFactory', 
-      function ($scope, $routeParams, dataFactory ) {
 
-      $scope.status;
-      $scope.studyplans = {};
-      //constraint params: curriculum, course and group ids
-      $scope.curricula = {};
-      $scope.groups = {};
-      $scope.courses = {};
-
-
-
-      $scope.curriculum;
-      $scope.course;
-      $scope.group;
-
-      init();
-      
-
-      function init() {
-         dataFactory.getCurricula()
-          .then(function (response) {
-              $scope.status = '';
-              $scope.curricula = response.data.curricula;
-              getStudyplan();
-              
-          }, function (error) {
-              $scope.status = 'Error in getCurricula' + error.data.error;
-          });
-          dataFactory.getCourses()
-          .then(function (response) {
-              $scope.status = '';
-              $scope.courses = response.data.courses;
-          }, function (error) {
-              $scope.status = 'Error in getCourses ' + error.data.error;
-          });
-           dataFactory.getGroups()
-          .then(function (response) {
-              $scope.status = '';
-              $scope.groups = response.data.groups;
-          }, function (error) {
-              $scope.status = 'Error in getGroups' + error.data.error;
-          });
-          return '';
-
-      };
-
-      function getStudyplan() {
-        var allstudyplans = [];
-        for(var i=0; i < $scope.curricula.length; i++ ) {
-          dataFactory.getStudyplan($scope.curricula[i].id)
-          .then(function (response) {
-             $scope.status = '';
-             allstudyplans.push({studyplan: [response.data]});
-
-          }, function (error) {
-              $scope.status = 'Error in getStudyplan ' + error.data.error;
-          });
-        };
-        $scope.studyplans = allstudyplans;
-      };      
-    
-      $scope.setConstraint = function () {
-        var constraintJson = {
-          curriculum: parseInt($scope.curriculum),
-          course: $scope.course,
-          group: parseInt($scope.group)
-        }
-        console.log(JSON.stringify(constraintJson));
-        dataFactory.setConstraint(constraintJson)
-              .then(function (response) {
-                  $scope.status = 'succeed: create constraint';
-                  getStudyplan();
-              }, function(error) {
-                  $scope.status = 'failed: Error in setConstraint ' + error.data.error;
-              });
-      };
-
-      $scope.deleteConstraint = function (id) {
-          
-          dataFactory.deleteConstraint(id)
-            .then(function (response) {
-                $scope.status = '';
-                getStudyplan();
-            }, function (error) {
-                $scope.status = 'Error in deleteConstraint' + error.data.error;
-            });
-      };
-
-}])
-
-.controller('curriculum', ['$scope', '$routeParams','dataFactory', 
-      function ($scope, $routeParams, dataFactory ) {
+.controller('curriculum', ['$scope', '$routeParams','dataFactory', '$location',
+      function ($scope, $routeParams, dataFactory, $location ) {
       $scope.status;
       $scope.curricula = {};
       $scope.title;
@@ -567,7 +649,8 @@ angular.module('admin', ['ngRoute','angular.filter'])
           dataFactory.getCurricula()
           .then(function (response) {
               $scope.status = '';
-              $scope.curricula = response.data;
+              $scope.curricula = response.data.curricula;
+
           }, function (error) {
               $scope.status = 'Error in getCurricula ' + error.data.error;
           });
@@ -614,24 +697,137 @@ angular.module('admin', ['ngRoute','angular.filter'])
                   });
       };
 
+      $scope.viewCurriculum = function(id) {
+        $location.path('/curriculum/view/' + id);
+      };
+
       function  getAcademicyears() {
         dataFactory.getAcademicyear()
         .then(function (response){
-            $scope.academicyears = response.data;
+            $scope.academicyears = response.data.academicyears;
         }, function (error) {
            $scope.status = 'Error in getAcademicyears ' + error.data.error;
         });
       };
 
 }])
+.controller('viewcurriculum', ['$scope','dataFactory', '$routeParams', '$location',
+      function ($scope, dataFactory, $routeParams, $location ) {
 
-.controller('group', ['$scope', '$routeParams','dataFactory', 
-      function ($scope, $routeParams, dataFactory ) {
+      $scope.curriculumdetails;
+
+      $scope.curriculum_id = $routeParams.id;
+
+      getCurriculumCourses();
+
+      function getCurriculumCourses () {
+        dataFactory.getCurriculumCourses($scope.curriculum_id)
+        .then(function (response) {
+                      $scope.status = '';
+                      $scope.curriculumdetails = response.data;
+                  }, function (error) {
+                      $scope.status = 'Error in validateCurriculum ' + error.data.error;
+                  });
+      };
+
+      $scope.configCurriculum = function() {
+        $location.path('/curriculum/config/' + $scope.curriculum_id);
+      };
+
+      $scope.goHome = function() {
+        $location.path('/');
+      };
+
+
+
+      
+
+}])
+.controller('configcurriculum', ['$scope','dataFactory', '$routeParams','$location',
+      function ($scope, dataFactory, $routeParams, $location ) {
+
+      $scope.groups;
+      $scope.checkedgroups = {}; //arrayo of true|false: true if html checkbox is checked, false if unchecked.
+
+      $scope.curriculum_id = $routeParams.id;
+      $scope.curriculum;
+
+      getGroups();
+      getCurriculum() 
+
+
+      function getGroups() {
+        dataFactory.getGroups()
+        .then(function (response) {
+              $scope.status = '';
+              $scope.groups = response.data.groups;
+          }, function (error) {
+              $scope.status = 'Error in getGroups' + error.data.error;
+          });
+      };
+
+      $scope.setCurriculumGroups = function () {
+        var selected_groups = [];
+
+        for( var g=0; g < $scope.groups.length; g++) {
+            var group =  $scope.groups[g];
+            //console.log("visited: " + course.name);
+            if( $scope.checkedgroups[group.id] &&  $scope.checkedgroups.hasOwnProperty(group.id) ) {
+              selected_groups.push(group);
+            }
+        }
+
+        var curriculumgroups_json = {
+          groups:  selected_groups
+        };
+
+        console.log(JSON.stringify(curriculumgroups_json));
+        dataFactory.setCurriculumGroups($scope.curriculum_id, curriculumgroups_json)
+              .then(function (response) {
+                  $scope.status = 'succeed: create constraint';
+                  viewCurriculum($scope.curriculum_id);
+
+              }, function(error) {
+                  $scope.status = 'failed: Error in setConstraint ' + error.data.error;
+              });
+      };
+
+      function viewCurriculum (id) {
+        $location.path('/curriculum/view/' + id);
+      };
+      
+      function getCurriculum() {
+          dataFactory.getCurricula()
+          .then(function (response) {
+              $scope.status = '';
+              for ( i=0; i < response.data.curricula.length; i++ ){
+                c = response.data.curricula[i];
+                if( c.id === parseInt($scope.curriculum_id)){
+                  $scope.curriculum = c;
+                  console.log("curr: " + c.id);
+
+                }
+              }
+
+          }, function (error) {
+              $scope.status = 'Error in getCurricula ' + error.data.error;
+          });
+      };
+
+      $scope.goHome = function() {
+        $location.path('/');
+      };
+
+
+}])
+.controller('group', ['$scope', '$routeParams','dataFactory', '$location',
+      function ($scope, $routeParams, dataFactory , $location) {
       $scope.status;
       $scope.groups = {};
 
       $scope.n;
       $scope.cfu;
+      $scope.name;
 
       getGroups();
 
@@ -649,6 +845,7 @@ angular.module('admin', ['ngRoute','angular.filter'])
         var json_group = {
           n: $scope.n,
           cfu: $scope.cfu,
+          name: $scope.name
         }
         dataFactory.setGroup(json_group)
         .then(function (response) {
@@ -673,6 +870,7 @@ angular.module('admin', ['ngRoute','angular.filter'])
         var json_group = {
           n: $scope.n,
           cfu: $scope.cfu,
+          name: $scope.name
         }
         dataFactory.updateGroup(id, json_group)
         .then(function (response) {
@@ -682,11 +880,119 @@ angular.module('admin', ['ngRoute','angular.filter'])
               $scope.status = 'Error in updateGroup ' + error.data.error;
           });
       }
+      $scope.viewGroup = function(id) {
+        $location.path('/group/view/' + id);
+      };
 }])
+
+.controller('viewgroup', ['$scope', '$routeParams','dataFactory', '$location',
+      function ($scope, $routeParams, dataFactory , $location) {
+
+        $scope.courses;
+
+        $scope.group_id = $routeParams.id;
+        $scope.group_name;
+
+        getGroupsCourses();
+
+         function getGroupsCourses(){
+          dataFactory.getGroupsCourses($scope.group_id)
+          .then(function (response) {
+                $scope.status = '';
+                $scope.courses = response.data.courses;
+                $scope.group_name = response.data.name;
+            }, function (error) {
+                $scope.status = 'Error in getCourses' + error.data.error;
+            });
+        }
+      $scope.configGroup = function() {
+        $location.path('/group/config/' +  $scope.group_id);
+      };
+      $scope.goHome = function() {
+        $location.path('/');
+      };
+}])
+.controller('configgroup', ['$scope', '$routeParams','dataFactory', '$location',
+      function ($scope, $routeParams, dataFactory , $location) {
+
+        $scope.group_id = $routeParams.id;
+        $scope.courses;
+        $scope.checkedcourses = {};
+        $scope.group;
+
+        getCourses();
+        getGroup();
+
+
+
+
+      function getCourses() {
+        dataFactory.getCourses()
+        .then(function (response) {
+              $scope.status = '';
+              $scope.courses = response.data.courses;
+          }, function (error) {
+              $scope.status = 'Error in getCourses' + error.data.error;
+          });
+      };
+
+        $scope.setGroupsCourses = function() {
+          var selected_courses = [];
+
+          for( var c=0; c < $scope.courses.length; c++) {
+              var course =  $scope.courses[c];
+              //console.log("visited: " + course.name);
+              if( $scope.checkedcourses[course.id] &&  $scope.checkedcourses.hasOwnProperty(course.id) ) {
+                selected_courses.push(course);
+              }
+          }
+
+
+          var groupcourses_json = {
+            courses: selected_courses
+          };
+
+          console.log( JSON.stringify(groupcourses_json));
+          dataFactory.setGroupsCourses($scope.group_id, groupcourses_json )
+          .then(function (response) {
+              $scope.status = 'succeed: create constraint';
+              viewGroup();
+          }, function(error) {
+              $scope.status = 'failed: Error in setConstraint ' + error.data.error;
+          });
+        };
+
+        function viewGroup() {
+           $location.path('/group/view/' +  $scope.group_id);
+        };
+
+
+      function getGroup() {
+        dataFactory.getGroups()
+        .then(function (response) {
+              $scope.status = '';
+              for( var i=0; i<response.data.groups.length; i++){
+                group = response.data.groups[i];
+                if( group.id === parseInt($scope.group_id)){
+                  $scope.group = group;
+                }
+              };
+          }, function (error) {
+              $scope.status = 'Error in getGroups' + error.data.error;
+          });
+      };
+
+      $scope.goHome = function() {
+        $location.path('/');
+      };
+
+}])
+
 .controller('course', ['$scope', '$routeParams','dataFactory', 
       function ($scope, $routeParams, dataFactory ) {
       $scope.status;
-      $scope.courses = {};
+      $scope.checkedcourses = {};
+      $scope.courses;
 
       $scope.academicyears = {};
       $scope.name;
@@ -783,7 +1089,7 @@ angular.module('admin', ['ngRoute','angular.filter'])
         dataFactory.getAcademicyear()
         .then(function (response) {
               $scope.status = '';
-              $scope.academicyears = response.data;
+              $scope.academicyears = response.data.academicyears;
           }, function (error) {
               $scope.status = 'Error in getAcademicyears: ' + error.data.error;
           });
@@ -829,23 +1135,276 @@ angular.module('admin', ['ngRoute','angular.filter'])
           });
       }
 }])
+/*
+.controller('curriculumgroups', ['$scope', '$routeParams','dataFactory', 
+      function ($scope, $routeParams, dataFactory ) {
+
+      $scope.status;
+
+      $scope.all_groups;
+      $scope.active_groups;
+      $scope.inactive_groups=[];
+
+      $scope.curriculum_id = $routeParams.curriculum_id;
+      $scope.curriculum_title;
+
+      getAllgroups();
+
+      function getAllgroups() {  
+
+          dataFactory.getGroups()
+          .then(function (response) {
+              $scope.status = 'ok';
+              $scope.all_groups = response.data.groups;
+                console.log("get group"); 
+                getCurriculumGroups($scope.curriculum_id);
+          }, function (error) {
+              $scope.status = 'Error in getGroups' + error.data.error;
+          });
+      };
+      
+      function getCurriculumGroups (curriculum_id) {
+         dataFactory.getCurriculumGroups(curriculum_id)
+              .then(function (response) {
+                  $scope.status = 'succeed: create constraint';
+                  $scope.active_groups = response.data.groups;
+                  $scope.curriculum_title = response.data.title;
+                  getInactivegroups();
+              }, function(error) {
+                  $scope.status = 'failed: Error in setConstraint ' + error.data.error;
+              });
+      };
+
+      function getInactivegroups() {
+         for( var i=0; i< $scope.all_groups.length; i++ ) {
+            if( !isActive($scope.all_groups[i].id)){
+                console.log("inactive: " + $scope.all_groups[i].id);
+                $scope.inactive_groups.push( $scope.all_groups[i]);
+            }
+          }
+       
+        
+      };
+
+      function isActive(group_id) {
+        for( var i = 0; i < $scope.active_groups.length; i++ ) {      
+          if ( group_id === $scope.active_groups[i].id) {
+           return true; 
+          } 
+        }
+        return false;
+      }
+
+      $scope.addGroup = function(group) {
+        $scope.active_groups.push(group);
+        var index = $scope.inactive_groups.indexOf(group);
+          if (index !== -1) {
+              $scope.inactive_groups.splice(index, 1);
+          }
+
+      }
+
+      $scope.removeGroup = function(group){
+         var index = $scope.active_groups.indexOf(group);
+          if (index !== -1) {
+              $scope.active_groups.splice(index, 1);
+          }
+          $scope.inactive_groups.push(group);
+      }
+
+      
+
+      $scope.setCurriculumGroups = function () {
+
+        var curriculumgroups_json = {
+          groups:  $scope.active_groups
+        };
+
+        console.log(JSON.stringify(curriculumgroups_json));
+        dataFactory.setCurriculumGroups($scope.curriculum_id, curriculumgroups_json)
+              .then(function (response) {
+                  $scope.status = 'succeed: create constraint';
+              }, function(error) {
+                  $scope.status = 'failed: Error in setConstraint ' + error.data.error;
+              });
+      };
+
+
+}])
+.controller('groupcourses', ['$scope', '$routeParams','dataFactory', 
+      function ($scope, $routeParams, dataFactory ) {
+
+        $scope.group_id = $routeParams.group_id;
+        $scope.courses;
+        $scope.inactive_courses = [];
+        $scope.active_courses;
+
+        getCourses();
+
+        function getCourses() {
+          dataFactory.getCourses()
+          .then(function (response) {
+                $scope.status = '';
+                $scope.courses = response.data.courses;
+
+                getGroupsCourses($scope.group_id);
+
+            }, function (error) {
+                $scope.status = 'Error in getCourses' + error.data.error;
+            });
+        };
+
+        function getGroupsCourses(group_id){
+          dataFactory.getGroupsCourses(group_id)
+          .then(function (response) {
+                $scope.status = '';
+                $scope.active_courses = response.data.courses;
+                getInactiveCourses();
+            }, function (error) {
+                $scope.status = 'Error in getCourses' + error.data.error;
+            });
+        }
+
+        function getInactiveCourses() {
+          for( var i=0; i < $scope.courses.length; i++) {
+            if( !isActive($scope.courses[i].id)){
+              $scope.inactive_courses.push($scope.courses[i]);
+            }
+          }
+        }
+
+        function isActive(course_id){
+          for( var i=0; i < $scope.active_courses.length; i++){
+            if( $scope.active_courses[i].id === course_id){
+              return true;
+            }
+          }
+          return false;
+        }
+
+        $scope.addCourse = function(course) {
+          $scope.active_courses.push(course);
+          var index = $scope.inactive_courses.indexOf(course);
+            if (index !== -1) {
+                $scope.inactive_courses.splice(index, 1);
+            }
+
+        }
+        $scope.removeCourse = function(course) {
+          var index = $scope.active_courses.indexOf(course);
+          if (index !== -1) {
+              $scope.active_courses.splice(index, 1);
+          }
+           $scope.inactive_courses.push(course);
+
+        }
+
+        $scope.setGroupsCourses = function() {
+          var groupcourses_json = {
+            courses: $scope.active_courses
+          }
+
+          console.log( groupcourses_json);
+          dataFactory.setGroupsCourses($scope.group_id, groupcourses_json )
+          .then(function (response) {
+              $scope.status = 'succeed: create constraint';
+          }, function(error) {
+              $scope.status = 'failed: Error in setConstraint ' + error.data.error;
+          });
+        };
+}])
+*/
+.controller('home', ['$scope','dataFactory', '$routeParams',
+      function ($scope, dataFactory, $routeParams ) {
+
+      //$scope.curriculacourses = [];
+      $scope.curricula;
+      $scope.curriculumcourses;
+      $scope.curriculum;
+      /*
+      function init() {
+        getCurricula();
+        for ( var i=0; i < $scope.curricula.length; i++){
+          $scope.curriculacourses.push($scope.curricula[i].id)
+        }
+      }
+      */
+      getCurricula()
+
+      function getCurricula() {
+          dataFactory.getCurricula()
+          .then(function (response) {
+              $scope.status = '';
+              $scope.curricula = response.data.curricula;
+
+          }, function (error) {
+              $scope.status = 'Error in getCurricula ' + error.data.error;
+          });
+      };
+      
+      $scope.getCurriculumCourses = function () {
+        dataFactory.getCurriculumCourses($scope.curriculum)
+        .then(function (response) {
+                      $scope.status = '';
+                      $scope.curriculumcourses = response.data;
+                  }, function (error) {
+                      $scope.status = 'Error in validateCurriculum ' + error.data.error;
+                  });
+      };
+      
+      $scope.configGroup = function(id) {
+        $location.path('/group/config/' + id);
+      };
+      $scope.configCurriculum= function(id) {
+        $location.path('/curriculum/config/' + id);
+      };
+
+}])
 //---------------
 // Routes
 //---------------
 .config(function($routeProvider) {
     $routeProvider
     .when('/', {
-      templateUrl: '/constraints.html',
-      controller: 'constraints'
+      templateUrl: '/home.html',
+      controller: 'home'
     })
+    /*
+    .when('/curriculumgroups/:curriculum_id', {
+      templateUrl: '/curriculumgroups.html',
+      controller: 'curriculumgroups'
+    })
+    .when('/groupcourses/:group_id', {
+      templateUrl: '/groupcourses.html',
+      controller: 'groupcourses'
+    })
+    */
     .when('/curriculum', {
 
       templateUrl: '/curriculum.html',
       controller: 'curriculum'
    })
+   .when('/curriculum/view/:id', {
+
+      templateUrl: '/viewcurriculum.html',
+      controller: 'viewcurriculum'
+   })
+   .when('/curriculum/config/:id', {
+
+      templateUrl: '/configcurriculum.html',
+      controller: 'configcurriculum'
+   })
     .when('/group', {
       templateUrl: '/group.html',
       controller: 'group'
+    })
+    .when('/group/view/:id', {
+      templateUrl: '/viewgroup.html',
+      controller: 'viewgroup'
+    })
+    .when('/group/config/:id', {
+      templateUrl: '/configgroup.html',
+      controller: 'configgroup'
     })
     .when('/course', {
       templateUrl: '/course.html',
