@@ -7,16 +7,42 @@ def validate_curriculum(fn):
 	def decorated_view(*args, **kwargs):
 		curriculum_id = kwargs['curriculum_id']
 		curriculum = Curricula.query.get(curriculum_id)
-		if (len(curriculum.groups) < 1 ):
-			return jsonify({"validate": False, "error": "curriculum " + str(curriculum.name) + " has zero groups"}), 500
 
+		''' Curriculum must has at least one group '''
+		if (len(curriculum.groups) < 1 ):
+			return jsonify({"error": "curriculum " + str(curriculum.name) + " has zero groups"}), 500
+
+		''' Courses '''
 		for group in curriculum.groups:
 			if len(group.courses) < group.n:
-				return jsonify({"validate": False, "error": "group " + str(group.name) + " has " + str(len(group.courses)) + " courses but " + str(group.n) + " courses are expected."}), 500
+				return jsonify({"error": "group " + str(group.name) + " has " + str(len(group.courses)) + " courses but " + str(group.n) + " courses are expected."}), 500
+
+		uniqueCourses = []
+		for group in curriculum.groups:
+			for course in group.courses:
+				pass
+		return fn(*args, **kwargs)
+	return decorated_view
+
+def validate_group(fn):
+	@wraps(fn)
+	def decorated_view(*args, **kwargs):
+		group_id = kwargs['group_id']
+		group = Groups.query.get(group_id)
+
+		''' Courses '''
+		for course in group.courses:
+			if len(group.courses) < group.n:
+				return jsonify({"error": "group " + str(group.name) + " has " + str(len(group.courses)) + " courses but " + str(group.n) + " courses are expected."}), 500
+
+		uniqueCourses = []
+		for group in curriculum.groups:
+			for course in group.courses:
+				pass
 
 		return fn(*args, **kwargs)
 	return decorated_view
-	
+
 ''' STUDY PLAN '''
 
 def validate_studyplan(fn):

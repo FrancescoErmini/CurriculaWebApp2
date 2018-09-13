@@ -15,49 +15,8 @@
   <script type="text/javascript" src="js/html2canvas.js"></script>
   <script type="text/javascript" src="js/pdfmake.min.js"></script>
   <script type="text/javascript" src="js/vfs_fonts.js"></script>
-
-  <style type="text/css">
-      table {
-      /*width:100%;*/
-      }
-      .extrasmall {
-        min-width: :2%;
-        text-align: center;
-
-      }
-      .smallcell{
-        min-width: 10%;
-        text-align: center;
-
-      }
-      .bigcell {
-        min-width: 58%;
-        text-align: left;
-        padding-left: 5%;
-
-      }
-       h4, h2 {
-        margin-top: 20px;
-        margin-bottom: 20px;
-      }
-      h2 {
-        text-align: center;
-      }
-
-     /* table, th, td {
-         border: 1px solid black;
-         padding: 5px;
-
-      }*/
-      ul {
-      list-style: none;
-      }
-
-  </style>
-
 </head>
 <body>
-
 
 <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
   <ul class="navbar-nav">
@@ -69,7 +28,6 @@
     </li>
   </ul>
 </nav>
-
 
 <ng-view></ng-view>
 <!-- Libraries Angular js -->
@@ -93,7 +51,7 @@
 <h2> {{curriculumcourses.curriculum.title}}</h2>
 <ul class="list-group">
   <li ng-repeat="g in curriculumcourses.groups track by $index" class="list-group-item list-group-flush">
-   <h4> {{g.id}}. Scegli {{g.n}} esami da {{g.cfu}} cfu tra: </h4>
+   <h4> {{g.name}}: Scegli {{g.n}} esami da {{g.cfu}} cfu tra: </h4>
        <table  class="table table-bordered">
         <tr>
           <th></th>
@@ -144,7 +102,7 @@
 </script>
 <script type="text/ng-template" id="/studyplan.html">
 
-<div class="container-fluid" id="printpage">
+<div class="container" id="printpage">
 <h2> Corso di studi ingegneria informatica</h2>
 <h4> P.d.s individuale - A.A {{studyplan.curriculum.ac}}</h4>
 
@@ -260,7 +218,7 @@ angular.module('app', ['ngRoute'])
               $scope.status = '';
               $scope.curricula = response.data.curricula;
           }, function (error) {
-              $scope.status = 'Error:' + error.error;
+              $scope.status =  JSON.stringify(error.data);
           });
       };
 }])
@@ -288,17 +246,12 @@ angular.module('app', ['ngRoute'])
               $scope.status = '';
               $scope.curriculumcourses = response.data;
           }, function (error) {
-              $scope.status = 'Error:' + error.error;
+              $scope.status =  JSON.stringify(error.data);
           });
       };
 
       $scope.submitstudyplan = function () {
-        setStudent();
-        setStudyplan($scope.student.id)
-        if(valid_student===true && valid_studyplan===true){
-          redirectTo('/studyplan/'+$scope.student.id);
-        }
-                
+        setStudent();  
       };
   
       function setStudent() {
@@ -318,8 +271,9 @@ angular.module('app', ['ngRoute'])
         dataFactory.setStudent(student_json)
         .then( function( response) {
            $scope.status = '';
+           setStudyplan($scope.student.id)
         }, function( error ) {
-          $scope.status = 'Error: ' + error.data.error;
+          $scope.status =  JSON.stringify(error.data);
         }); 
       };
 
@@ -350,7 +304,7 @@ angular.module('app', ['ngRoute'])
         for( index = 0; index < coursecounter.length; index++){
           if( coursecounter[index] < $scope.curriculumcourses.groups[index].n ) {
 
-            alert("group " + String($scope.curriculumcourses.groups[index].name) + "has " + String(coursecounter) + " courses but " + String($scope.curriculumcourses.groups[index].n) + " expected");
+            alert("group " + String($scope.curriculumcourses.groups[index].name) + " has " + String(coursecounter[index]) + " courses but " + String($scope.curriculumcourses.groups[index].n) + " expected");
             
             valid_studyplan = false;
             return;
@@ -369,12 +323,13 @@ angular.module('app', ['ngRoute'])
 
         dataFactory.setStudyplan(json_output)
         .then(function (response) {
-            $scope.status = 'The study plan has been validated.';
+            $scope.status = '';
             $scope.studyplancourses = response.data;
-            $scope.studyplan_hidden=true;
+
+            redirectTo('/studyplan/'+ $scope.student.id);
             
         }, function(error) {
-            $scope.status = 'Error: ' + error.data.error; 
+            $scope.status = JSON.stringify(error.data); 
         });
       };
 
@@ -404,7 +359,7 @@ angular.module('app', ['ngRoute'])
               $scope.status = '';
               $scope.studyplan = response.data;
           }, function (error) {
-              $scope.status = 'Error:' + error.error;
+              $scope.status =  JSON.stringify(error.data);
           });
       };
 
