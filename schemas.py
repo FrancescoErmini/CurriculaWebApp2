@@ -1,7 +1,6 @@
 #https://pypi.org/project/flask-expects-json/
 #https://github.com/Julian/jsonschema
 
-
 student_schema = {
     'type': 'object',
     'required': ['id'],
@@ -12,7 +11,6 @@ student_schema = {
     }
 }
 
-
 academicyear_schema = {
     'type': 'object',
     'required': ['id'],
@@ -22,7 +20,6 @@ academicyear_schema = {
         'end': {'type': 'string'}
     }
 }
-
 
 course_schema = {
     'type': 'object',
@@ -59,18 +56,17 @@ curriculum_schema = {
                 },
                 #'additionalProperties': false,
             },
-            'minItems': 1
+            'minItems': 1 #also checked in validator.py
         }
 
     }
 }
 
-
 group_schema = {
     'type': 'object',
     'required': ['name','cfu', 'n', 'courses'],
     'properties': {
-        'name': {'type':'string'},
+        'name': {'type': 'string'},
         'cfu': {'type': 'number'},
         'n': {'type': 'number'},
         'courses': {
@@ -90,12 +86,10 @@ group_schema = {
                 },
                 #'additionalProperties': false,
             },
-            'minItems': 1
+            'minItems': 1 #also checked in validator.py
         }
     },
 }
-
-
 
 studyplan_schema = {
     'type': 'object',

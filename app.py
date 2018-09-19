@@ -1,10 +1,11 @@
 from flask import Flask, flash, redirect, render_template, request, url_for, jsonify, json
-from models import  db, Curricula, Courses, Groups, Academicyears, GroupsCourses, CurriculaGroups, Students, Studyplans, StudyplansCourses
+from models import  db, Curricula, Courses, Groups, Academicyears,  Students, Studyplans # StudyplansCourses #CurriculaGroups, GroupsCourses,
 from functools import wraps
 from flask_expects_json import expects_json
 from flask_basicauth import BasicAuth
-from validator import  validate_studyplan, validate_curriculum
+from validator import  validate_studyplan, validate_group, validate_curriculum, validate_academicyear, validate_course, validate_student
 from schemas import student_schema, academicyear_schema, curriculum_schema, group_schema, course_schema, studyplan_schema
+
 from flask_cors import CORS, cross_origin
 import csv
 import os
@@ -34,9 +35,6 @@ db.create_all(app=app)
 
 basic_auth = BasicAuth(app)
 
-@app.route('/')
-def init():
-	return render_template('index.html')
 
 #set manually
 #https://github.com/corydolphin/flask-cors/issues/197
@@ -80,6 +78,7 @@ def getAcademicyears():
 @app.route('/academicyear/', methods=['POST'])
 @basic_auth.required
 @expects_json(academicyear_schema)
+@validate_academicyear
 def setAcademicyear():
 	try:
 		data = request.get_json()	
@@ -92,13 +91,14 @@ def setAcademicyear():
 		return jsonify({"error": str(e)}),500
 	return jsonify(data),201
 
-@app.route('/academicyear/<string:academicyear_id>/', methods=['PUT'])
+@app.route('/academicyear/', methods=['PUT'])
 @basic_auth.required
-#@expects_json(academicyear_schema)
-def updateAcademicyear(academicyear_id):
+@expects_json(academicyear_schema)
+@validate_academicyear
+def updateAcademicyear():
 	try:
 		data = request.get_json()
-		academicyear = Academicyears.query.get(academicyear_id)
+		academicyear = Academicyears.query.get(data['id'])
 		academicyear.start = data['start']
 		academicyear.end = data['end']
 		#notice: no check for dupl]icate
@@ -138,9 +138,10 @@ def getCourses():
 @app.route('/course/', methods=['POST'])
 @basic_auth.required
 @expects_json(course_schema)
+@validate_course
 def setCourse():
 	try:
-		data = request.get_json()
+		d = request.get_json()
 		course = Courses(id=d['id'], name=d['name'], cfu=d['cfu'], ssd=d['ssd'])
 		db.session.add(course)
 		course.ac= d['ac']
@@ -152,12 +153,14 @@ def setCourse():
 		return jsonify({"error": str(e)}),500
 	return jsonify(d),201
 
-@app.route('/course/<string:course_id>/', methods=['PUT'])
+@app.route('/course/', methods=['PUT'])
 @basic_auth.required
-def updateCourse(course_id):
+@expects_json(course_schema)
+def updateCourse():
 	try:
 		d = request.get_json()
-		course = Courses.query.get(course_id)
+		course = Courses.query.get(d['id'])
+		course.name = d['name']
 		course.cfu= d['cfu']
 		course.ssd= d['ssd']
 		course.ac= d['ac']
@@ -174,6 +177,8 @@ def updateCourse(course_id):
 def deleteCourse(course_id):
 	try:
 		course = Courses.query.get(course_id)
+		#course = db.session.query(Courses).filter(Courses.id == course_id).first()
+
 		db.session.delete(course)
 		db.session.commit()
 	except Exception as e:
@@ -204,6 +209,7 @@ def getCurriculum(curriculum_id):
 @app.route('/curriculum/', methods=['POST'])
 @basic_auth.required
 @expects_json(curriculum_schema)
+@validate_curriculum
 def setCurriculum():
 	try:
 		data = request.get_json()	
@@ -223,7 +229,8 @@ def setCurriculum():
 
 @app.route('/curriculum/<int:curriculum_id>/', methods=['PUT'])
 @basic_auth.required
-#@expects_json(curriculum_schema)
+@expects_json(curriculum_schema)
+@validate_curriculum
 def updateCurriculum(curriculum_id):
 	try:
 		data = request.get_json()
@@ -238,18 +245,19 @@ def updateCurriculum(curriculum_id):
 		db.session.commit()
 	except Exception as e:
 		return jsonify({"error": str(e)}),500
-	return jsonify(data),201
+	return jsonify({"id": curriculum.id}),201
 
 @app.route('/curriculum/<int:curriculum_id>/', methods=['DELETE'])
 @basic_auth.required
 def deleteCurriculum(curriculum_id):	
 	try:
 		curriculum = Curricula.query.get(curriculum_id)
+		#my_instance = db.session.query(Curricula).filter(Curricula.id == curriculum_id).first()
 		db.session.delete(curriculum)
 		db.session.commit()
 	except Exception as e:
 		return jsonify({"error": str(e)}),500
-	return jsonify({"id":curriculum.id, "title":curriculum.title, "desc":curriculum.desc, "ac":curriculum.ac}),201
+	return jsonify({"id":curriculum.id}),201
 '''
 
 GROUP
@@ -272,10 +280,10 @@ def getGroup(group_id):
 @app.route('/group/', methods=['POST'])
 @basic_auth.required
 @expects_json(group_schema)
+@validate_group
 def setGroup():
 	try:
 		data = request.get_json()
-
 		group = Groups(name=data['name'])
 		group.cfu = data['cfu']
 		group.n = data['n']
@@ -293,7 +301,8 @@ def setGroup():
 
 @app.route('/group/<int:group_id>/', methods=['PUT'])
 @basic_auth.required
-#@expects_json(group_schema)
+@expects_json(group_schema)
+@validate_group
 def updateGroup(group_id):
 	try:
 		data = request.get_json()	
@@ -310,7 +319,7 @@ def updateGroup(group_id):
 		db.session.commit()
 	except Exception as e:
 		return jsonify({"error": str(e)}),500
-	return jsonify(data),201
+	return jsonify({"id": group.id}),201
 
 @app.route('/group/<int:group_id>/', methods=['DELETE'])
 @basic_auth.required
@@ -347,6 +356,7 @@ def getStudent(student_id):
 
 @app.route('/student/', methods=['POST'])
 @expects_json(student_schema)
+@validate_student
 def setStudent():
 	try:
 		data = request.get_json()
@@ -398,7 +408,15 @@ def getStudyplan(student_id):
 		return jsonify({"error": str(e)}),500
 	return jsonify({"id": studyplan.id, "student": {"id": student.id, "firstname": student.firstname, "lastname": student.lastname }, "curriculum": {"id": curriculum.id, "title": curriculum.title, "ac": curriculum.ac}, "courses": [{"id": c.id, "name": c.name, "ssd": c.ssd, "url": c.url, "cfu": c.cfu, "year": c.year, "semester": c.semester} for c in studyplan.courses ] }),201	
 
-#	return jsonify({"curriculum":curriculum.id, "title":curriculum.title, "groups":[{"id": g.id, "cfu":g.cfu, "n":g.n, "courses": [{"code": k.id, "name": k.name, "ssd": k.ssd, "url":k.url, "cfu": k.credits, "key": k.key} for k in q if k.group_id == g.id]} for g in groups]}),201
+@app.route('/studyplan/<string:student_id>/', methods=['DELETE'])
+def deleteStudyplan(student_id):
+	try: 
+		studyplan = Studyplans.query.get(student_id)
+		db.session.delete(studyplan)
+		db.session.commit()
+	except Exception as e:
+		return jsonify({"error": str(e)}),500
+	return jsonify({"id": studyplan.id }), 201
 
 
 if __name__ == '__main__':

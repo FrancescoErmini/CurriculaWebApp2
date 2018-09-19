@@ -228,10 +228,21 @@ angular.module('app', ['ngRoute'])
 
       $scope.curriculumcourses; //populate the course list with received data
       $scope.studentcourses = {}; //arrayo of true|false: true if html checkbox is checked, false if unchecked.
-      $scope.studyplancourses = {};
-      $scope.studyplan_hidden=false;
 
-      $scope.student = { id:'', firstname: '', lastname: '' };
+
+      $scope.student = { 
+        "id": "", 
+        "firstname": "", 
+        "lastname": "" 
+      };
+
+      $scope.studyplan = {
+        "student": "",
+        "curriculum": 0,
+        "courses": null
+      }
+
+
 
       $scope.curriculum_id = $routeParams.id
 
@@ -253,22 +264,16 @@ angular.module('app', ['ngRoute'])
       $scope.submitstudyplan = function () {
         setStudent();  
       };
+
+
   
       function setStudent() {
-        if( $scope.student.id.length !== 7){
+
+        if( $scope.student.id.length !== 7) { 
           alert("Warning: 'Matricola' expects 7 charsets");
-          valid_student = false;
           return;
         }
-        valid_student=true;
-
-        var student_json = {
-          id: $scope.student.id,
-          firstname: $scope.student.firstname,
-          lastname: $scope.student.lastname
-        }
-
-        dataFactory.setStudent(student_json)
+        dataFactory.setStudent($scope.student)
         .then( function( response) {
            $scope.status = '';
            setStudyplan($scope.student.id)
@@ -277,30 +282,34 @@ angular.module('app', ['ngRoute'])
         }); 
       };
 
+
+
+
       function setStudyplan(id) {
+
+        $scope.studyplan.student = $scope.student.id;
+        $scope.studyplan.curriculum =  parseInt($routeParams.id);
                            
-        var groups = [];
         var allcourses = [];
-        var coursecounter=[];
+       // var coursecounter=[];
+        //iterate groups in a curriculum
         for( var i=0; i < $scope.curriculumcourses.groups.length; i++ ){
-          coursecounter[i]=0;
-          var courses = [];
+          //coursecounter[i]=0;
+          //iterate all courses in  a group
           for( var k=0; k < $scope.curriculumcourses.groups[i].courses.length; k++) {
             var course =  $scope.curriculumcourses.groups[i].courses[k];
-            //console.log("visited: " + course.name);
+            //pick checked courses by the student
             if( $scope.studentcourses[course.id] &&  $scope.studentcourses.hasOwnProperty(course.id) ) {
-                //console.log("add: " + course.name);
-                coursecounter[i]+=1;
-                courses.push({id: course.id}); //assemble json, part 1
-                allcourses.push({id: course.id});
+               // coursecounter[i]+=1;
+                allcourses.push({"id": course.id});
             }
-          } //end loop courses in a group
-          // optional: give an alarm if too few courses have been selected
-
-          groups.push({id: $scope.curriculumcourses.groups[i].id, courses: courses }); //assemble json, part 2
-
+          } //end loop in courses
         }
+        $scope.studyplan.courses = allcourses;
+        console.log(JSON.stringify($scope.studyplan));
+
         //assemble json, part 3
+        /*
         for( index = 0; index < coursecounter.length; index++){
           if( coursecounter[index] < $scope.curriculumcourses.groups[index].n ) {
 
@@ -310,18 +319,15 @@ angular.module('app', ['ngRoute'])
             return;
           }
         }
-
-        valid_studyplan = true;
-
+        
         var json_output = {
           student:  $scope.student.id,
           curriculum: $scope.curriculum_id ,
           courses: allcourses
         }
-
-        console.log(JSON.stringify(json_output));
-
-        dataFactory.setStudyplan(json_output)
+        */
+        
+        dataFactory.setStudyplan($scope.studyplan)
         .then(function (response) {
             $scope.status = '';
             $scope.studyplancourses = response.data;
@@ -335,7 +341,6 @@ angular.module('app', ['ngRoute'])
 
     function redirectTo(_url_) {
       $location.path(_url_);
-
     }
     $scope.goHome = function() {
         $location.path('/');
