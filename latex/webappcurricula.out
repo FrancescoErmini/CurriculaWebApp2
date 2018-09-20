@@ -1,0 +1,24 @@
+\BOOKMARK [1][-]{section.1}{Requirements}{}% 1
+\BOOKMARK [1][-]{section.2}{Data model}{}% 2
+\BOOKMARK [1][-]{section.3}{Entity relationship}{}% 3
+\BOOKMARK [1][-]{section.4}{Project Setup and structure}{}% 4
+\BOOKMARK [1][-]{section.5}{RESTful API}{}% 5
+\BOOKMARK [1][-]{section.6}{Consumare API da linea di comando}{}% 6
+\BOOKMARK [1][-]{section.7}{Frontend}{}% 7
+\BOOKMARK [1][-]{section.8}{validazione e vincoli sui dati}{}% 8
+\BOOKMARK [2][-]{subsubsection.8.0.1}{Academicyear}{section.8}% 9
+\BOOKMARK [3][-]{subsubsection.8.0.2}{Course}{subsubsection.8.0.1}% 10
+\BOOKMARK [3][-]{subsubsection.8.0.3}{Student}{subsubsection.8.0.1}% 11
+\BOOKMARK [3][-]{subsubsection.8.0.4}{Studyplan}{subsubsection.8.0.1}% 12
+\BOOKMARK [3][-]{subsubsection.8.0.5}{Group}{subsubsection.8.0.1}% 13
+\BOOKMARK [3][-]{subsubsection.8.0.6}{Curriculum}{subsubsection.8.0.1}% 14
+\BOOKMARK [2][-]{subsection.8.1}{Appendice A: rappresentazione JSON degli oggetti di dominio}{section.8}% 15
+\BOOKMARK [3][-]{subsubsection.8.1.1}{Academic year}{subsection.8.1}% 16
+\BOOKMARK [3][-]{subsubsection.8.1.2}{Course}{subsection.8.1}% 17
+\BOOKMARK [3][-]{subsubsection.8.1.3}{Group}{subsection.8.1}% 18
+\BOOKMARK [3][-]{subsubsection.8.1.4}{Curriculum}{subsection.8.1}% 19
+\BOOKMARK [3][-]{subsubsection.8.1.5}{Curriculum courses}{subsection.8.1}% 20
+\BOOKMARK [3][-]{subsubsection.8.1.6}{Student}{subsection.8.1}% 21
+\BOOKMARK [3][-]{subsubsection.8.1.7}{Studyplan}{subsection.8.1}% 22
+\BOOKMARK [1][-]{section.9}{Appendice B: validazione del formato JSON}{}% 23
+\BOOKMARK [1][-]{section.10}{CSV Parser}{}% 24

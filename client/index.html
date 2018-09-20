@@ -37,14 +37,19 @@
 
 <!-- Template -->
 <script type="text/ng-template" id="/curricula.html">
+<div class="container">
+  <h2> Curricula per Ingegneria Informatica Magistrale  - Unifi </h2>
+  <div class="row">
   <table class="table table-bordered">
     <tr ng-repeat="curriculum in curricula">
-      <td><h4>{{curriculum.title}}</h4></td>
+      <td>{{curriculum.title}}</td>
       <td> {{curriculum.desc}}</td>
-      <td><a href="#/curriculum/{{curriculum.id}}"> Scegli {{curriculum.id}}</a></td>
+      <td> <a href="#/curriculum/{{curriculum.id}}"> <input type="button" value="Scegli" class="btn btn-outline-primary" > </a> </td>
     </tr>
   </table>
-  {{status}}
+  </div>
+  <p class="error"> {{status}}</p>
+</div>
 </script>
 <script type="text/ng-template" id="/curriculum.html">
 <div class="container">
@@ -94,7 +99,7 @@
     <input type="button" value="Home" class="col btn" ng-click="goHome()"> 
     </div>
     <div class="col">
-      <input type="button"  value="valida il piano" ng-click="submitstudyplan()" class="btn btn-primary col" >
+      <input type="button"  value="valida il piano" ng-click="submitstudyplan()" class="btn btn-outline-primary col" >
     </div>
 </div>
 </div>
@@ -103,6 +108,7 @@
 <script type="text/ng-template" id="/studyplan.html">
 
 <div class="container" id="printpage">
+  <div class="row">
 <h2> Corso di studi ingegneria informatica</h2>
 <h4> P.d.s individuale - A.A {{studyplan.curriculum.ac}}</h4>
 
@@ -158,9 +164,15 @@
     </td>
   </tr>
 </table>
-
 </div>
-<input type="button"  value="stampa pdf" ng-click="printstudyplan()" >
+<div class="row">
+  <div class="col-sm-10">
+  </div>
+  <div class="col-sm-2">
+    <input type="button"  value="stampa pdf" ng-click="printstudyplan()" class="btn btn-outline-primary" style="float: right;" >
+  </div>
+</div>
+</div>
 {{status}}
 </script>
 
