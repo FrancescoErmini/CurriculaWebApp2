@@ -73,10 +73,30 @@ def validate_studyplan(fn):
         	count=0
         	for course in data['courses']:
         		if( course['id'] in [c.id for c in group.courses]):
+
         			count+=1
         	if count < group.n:
         		return jsonify({"error": "group " + str(group.name) +" has " +str(count)+" courses but " + str(group.n) + " courses are expected for curriculum " +  str(curriculum.title) }),500
 
+        if len(data['othercourses']) > 2:
+        	return jsonify({"error": "Over the free choice course number limit"}),500
+        
+        #count cfu for courses within the curriculum
+        cfu = 0
+        for course in data['courses']:
+        	cfu += int(course['cfu'])
+
+        #count cfu for free choice courses
+        other_cfu = 0
+        for othercourse in data['othercourses']:
+        	other_cfu += int(othercourse['cfu'])
+        #check the free choice courses constraint
+        if other_cfu != 12:
+        	return jsonify({"error": "You must have 12 CFU for free choice courses"}),500
+        #check total cfu constraint ( 24 = 21 + 3: 21 cfu is the thesis and 3 cfu is the lab/stage )
+        if cfu + other_cfu + 24 != 120:
+        	return jsonify({"error": ""})
+        
         return fn(*args, **kwargs)
     return decorated_view
 
