@@ -80,6 +80,38 @@
 </ul>  
 </br>
 
+
+
+<form style="border: 1px solid #e0e0e0">
+  <h4> Inserisci due corsi a scelta libera da 6 cfu </h4>
+  <div class="row">
+    <label class="form-group col-md-1"> Codice: </label> 
+    <input class="form-group col-md-2" type="text" ng-model="studyplan.othercourses[0].id">
+
+    <label class="form-group col-md-1"> Nome: </label> 
+    <input class="form-group col-md-2" type="text" ng-model="studyplan.othercourses[0].name">
+
+    <label class="form-group col-md-1"> SSD: </label> 
+    <input class="form-group col-md-2" type="text" ng-model="studyplan.othercourses[0].ssd">
+
+    <label class="form-group col-md-1"> CFU: </label> 
+    <input class="form-group col-md-2" type="number" ng-model="studyplan.othercourses[0].cfu">
+  </div>
+  <div class="row">
+    <label class="form-group col-md-1"> Codice: </label> 
+    <input class="form-group col-md-2" type="text" ng-model="studyplan.othercourses[1].id">
+
+    <label class="form-group col-md-1"> Nome: </label> 
+    <input class="form-group col-md-2" type="text" ng-model="studyplan.othercourses[1].name">
+
+    <label class="form-group col-md-1"> SSD: </label> 
+    <input class="form-group col-md-2" type="text" ng-model="studyplan.othercourses[1].ssd">
+
+    <label class="form-group col-md-1"> CFU: </label> 
+    <input class="form-group col-md-2" type="number" ng-model="studyplan.othercourses[1].cfu">
+  </div>
+</form>
+
 <form class="form-row">
 <legend> Student data: </legend>
  
@@ -94,6 +126,7 @@
 <input class="form-group col-md-3" type="text" ng-model="student.lastname">
 
 </form>
+
 <div class="row">
     <div class="col">
     <input type="button" value="Home" class="col btn" ng-click="goHome()"> 
@@ -102,15 +135,15 @@
       <input type="button"  value="valida il piano" ng-click="submitstudyplan()" class="btn btn-outline-primary col" >
     </div>
 </div>
+
+ <p class="error"> {{status}}</p>
 </div>
- {{status}} 
 </script>
 <script type="text/ng-template" id="/studyplan.html">
-
 <div class="container" id="printpage">
   <div class="row">
-<h2> Corso di studi ingegneria informatica</h2>
-<h4> P.d.s individuale - A.A {{studyplan.curriculum.ac}}</h4>
+  <h2> Corso di studi ingegneria informatica</h2>
+  <h4> P.d.s individuale - A.A {{studyplan.curriculum.ac}}</h4>
 
 
  <table class="table table-bordered">
@@ -163,17 +196,37 @@
       {{c.semester}}
     </td>
   </tr>
-</table>
-</div>
-<div class="row">
-  <div class="col-sm-10">
+   <tr ng-repeat="oc in studyplan.othercourses">
+    <td>
+      {{oc.id}}
+    </td>
+    <td>
+      {{oc.name}}
+    </td>
+    <td>
+      {{oc.cfu}}
+    </td>
+    <td>
+      {{oc.ssd}}
+    </td>
+    <td>
+      -
+    </td>
+    <td>
+      -
+    </td>
+   </tr>
+  </table>
+  </div>
+  <div class="row">
+    <div class="col-sm-10">
   </div>
   <div class="col-sm-2">
     <input type="button"  value="stampa pdf" ng-click="printstudyplan()" class="btn btn-outline-primary" style="float: right;" >
   </div>
 </div>
+ <p class="error"> {{status}} </p>
 </div>
-{{status}}
 </script>
 
 <script type="text/ng-template" id ="/student.html">
@@ -251,7 +304,8 @@ angular.module('app', ['ngRoute'])
       $scope.studyplan = {
         "student": "",
         "curriculum": 0,
-        "courses": null
+        "courses": null,
+        "othercourses": [{"id": "", "name": "", "ssd": "", "cfu": 0 }, {"id": "", "name": "", "ssd": "", "cfu": 0}]
       }
 
 

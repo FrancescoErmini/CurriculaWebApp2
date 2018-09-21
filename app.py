@@ -1,5 +1,5 @@
 from flask import Flask, flash, redirect, render_template, request, url_for, jsonify, json
-from models import  db, Curricula, Courses, Groups, Academicyears,  Students, Studyplans # StudyplansCourses #CurriculaGroups, GroupsCourses,
+from models import  db, Curricula, Courses, Groups, Academicyears,  Students, Studyplans, OtherCourses# StudyplansCourses #CurriculaGroups, GroupsCourses,
 from functools import wraps
 from flask_expects_json import expects_json
 from flask_basicauth import BasicAuth
@@ -391,6 +391,13 @@ def setStudyplan():
 		for c in data['courses']:
 			course = Courses.query.get(c['id'])
 			studyplan.courses.append(course)
+		for c in data['othercourses']:
+			if OtherCourses.query.get(c['id']) is None:
+				othercourse = OtherCourses(id=c['id'], name=c['name'], cfu=c['cfu'], ssd=c['ssd'])
+			else:
+				othercourse = OtherCourses.query.get(c['id']);
+			studyplan.othercourses.append(othercourse)
+			# db.session.add(othercourse) ??
 
 		db.session.commit()
 	except Exception as e:
@@ -406,7 +413,7 @@ def getStudyplan(student_id):
 
 	except Exception as e:
 		return jsonify({"error": str(e)}),500
-	return jsonify({"id": studyplan.id, "student": {"id": student.id, "firstname": student.firstname, "lastname": student.lastname }, "curriculum": {"id": curriculum.id, "title": curriculum.title, "ac": curriculum.ac}, "courses": [{"id": c.id, "name": c.name, "ssd": c.ssd, "url": c.url, "cfu": c.cfu, "year": c.year, "semester": c.semester} for c in studyplan.courses ] }),201	
+	return jsonify({"id": studyplan.id, "student": {"id": student.id, "firstname": student.firstname, "lastname": student.lastname }, "curriculum": {"id": curriculum.id, "title": curriculum.title, "ac": curriculum.ac}, "courses": [{"id": c.id, "name": c.name, "ssd": c.ssd, "url": c.url, "cfu": c.cfu, "year": c.year, "semester": c.semester} for c in studyplan.courses ], "othercourses":[ {"id": oc.id, "name": oc.name, "ssd": oc.ssd, "cfu": oc.cfu} for oc in studyplan.othercourses]}),201	
 
 @app.route('/studyplan/<string:student_id>/', methods=['DELETE'])
 def deleteStudyplan(student_id):

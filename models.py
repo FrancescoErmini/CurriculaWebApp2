@@ -47,6 +47,19 @@ class Courses(Base):
         self.cfu = cfu
         self.ssd = ssd
 
+class OtherCourses(Base):
+    __tablename__ = 'othercourses'
+    id = db.Column(db.String(7), primary_key=True) # id = B000001
+    name = db.Column(db.String(200), nullable=False)               # name = Analisi Matematica
+    cfu = db.Column(db.Integer, nullable=False)
+    ssd = db.Column(db.String(10), nullable=False)
+
+    def __init__(self, id, name, cfu, ssd):
+        self.id=id
+        self.name = name
+        self.cfu = cfu
+        self.ssd = ssd
+
 class Curricula(Base):
     __tablename__ = 'curricula'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -85,6 +98,8 @@ class Studyplans(Base):
     curriculum_id = db.Column(db.Integer, db.ForeignKey('curricula.id'))
     
     courses = db.relationship('Courses', secondary='studyplan_courses_association')
+    othercourses = db.relationship('OtherCourses', secondary='studyplan_othercourses_association')
+
     #backref serve a fare il delete di curriculum senza avere errore di violazione integrita per via della foreign key.
     curriculum = db.relationship('Curricula', backref=db.backref('studyplans', uselist=False))
 
@@ -119,3 +134,6 @@ studyplan_courses_association = db.Table('studyplan_courses_association', Base.m
     db.Column('course_id', db.String(7), db.ForeignKey('courses.id',  ondelete='cascade'), nullable=True))
 
 
+studyplan_courses_association = db.Table('studyplan_othercourses_association', Base.metadata,
+    db.Column('studyplan_id', db.String(7), db.ForeignKey('studyplans.id')),
+    db.Column('othercourse_id', db.String(7), db.ForeignKey('othercourses.id',  ondelete='cascade'), nullable=True))

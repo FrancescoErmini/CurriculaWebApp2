@@ -107,8 +107,22 @@ studyplan_schema = {
                 },
                 #'additionalProperties': false,
             },
-            'minItems': 1
+            'minItems': 11
+        },
+        'othercourses': {
+            'type': 'array',
+            'items': {
+                'type': 'object',
+                'required': ['id','name','ssd','cfu'],
+                'properties': {
+                    'id': {'type': 'string'},
+                    'name': {'type': 'string'},
+                    'ssd': {'type': 'string'},
+                    'cfu': {'type': 'number'}
+                },
+                #'additionalProperties': false,
+            },
+            'minItems': 2
         }
-
     }
 }

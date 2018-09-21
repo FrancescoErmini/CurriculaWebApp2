@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.19 (TeX Live 2018) (preloaded format=pdflatex 2018.8.30)  20 SEP 2018 13:35
+This is pdfTeX, Version 3.14159265-2.6-1.40.19 (TeX Live 2018) (preloaded format=pdflatex 2018.8.30)  20 SEP 2018 20:13
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -549,7 +549,7 @@ Overfull \hbox (2.44632pt too wide) in paragraph at lines 205--206
  per-corso, degli in-seg-na-menti all'interno
  []
 
-<img/UseCaseDiagram.png, id=108, 997.7275pt x 483.8075pt>
+<img/UseCaseDiagram.png, id=100, 997.7275pt x 483.8075pt>
 File: img/UseCaseDiagram.png Graphic file (type png)
 <use img/UseCaseDiagram.png>
 Package pdftex.def Info: img/UseCaseDiagram.png  used on input line 221.
@@ -566,7 +566,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 237--249
 
  []
 
-<img/ERDdiagramConcettuale.png, id=120, 636.3775pt x 588.1975pt>
+<img/ERDdiagramConcettuale.png, id=112, 636.3775pt x 588.1975pt>
 File: img/ERDdiagramConcettuale.png Graphic file (type png)
 <use img/ERDdiagramConcettuale.png>
 Package pdftex.def Info: img/ERDdiagramConcettuale.png  used on input line 252.
@@ -588,7 +588,7 @@ LaTeX Font Info:    Try loading font information for T1+cmtt on input line 283.
 (/usr/local/texlive/2018/texmf-dist/tex/latex/base/t1cmtt.fd
 File: t1cmtt.fd 2014/09/29 v2.5h Standard LaTeX font definitions
 )
-<img/ERDdiagram.png, id=138, 1262.7175pt x 756.8275pt>
+<img/ERDdiagram.png, id=130, 1262.7175pt x 756.8275pt>
 File: img/ERDdiagram.png Graphic file (type png)
 <use img/ERDdiagram.png>
 Package pdftex.def Info: img/ERDdiagram.png  used on input line 287.
@@ -708,52 +708,40 @@ Package atveryend Info: Empty hook `AfterLastShipout' on input line 889.
  (./webappcurricula.aux)
 Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 889.
 Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 889.
+Package rerunfilecheck Info: File `webappcurricula.out' has not changed.
+(rerunfilecheck)             Checksum: 9BE37266BC591D84549DDCBA0AAA4A16;1579.
 
-
-Package rerunfilecheck Warning: File `webappcurricula.out' has changed.
-(rerunfilecheck)                Rerun to get outlines right
-(rerunfilecheck)                or use package `bookmark'.
-
-Package rerunfilecheck Info: Checksums for `webappcurricula.out':
-(rerunfilecheck)             Before: D4CA88830D65368D1DF4491445363F9E;1700
-(rerunfilecheck)             After:  9BE37266BC591D84549DDCBA0AAA4A16;1579.
 
 LaTeX Warning: There were undefined references.
 
 Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 889.
  ) 
 Here is how much of TeX's memory you used:
- 12394 strings out of 492649
- 180571 string characters out of 6129622
- 638680 words of memory out of 5000000
- 15641 multiletter control sequences out of 15000+600000
+ 12390 strings out of 492649
+ 180511 string characters out of 6129622
+ 638677 words of memory out of 5000000
+ 15639 multiletter control sequences out of 15000+600000
  15265 words of font info for 37 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  37i,9n,41p,1040b,1940s stack positions out of 5000i,500n,10000p,200000b,80000s
-pdfTeX warning (dest): name{subsection.7.2} has been referenced but does not 
-exist, replaced by a fixed one
-
-pdfTeX warning (dest): name{subsection.7.1} has been referenced but does not ex
-ist, replaced by a fixed one
-
-{/usr/local/texlive/2018/texmf-dist/fonts/enc/dvips/cm-super/cm-super-t1.enc}</
-usr/local/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></u
-sr/local/texlive/2018/texmf-dist/fonts/type1/public/cm-super/sfbx1000.pfb></usr
-/local/texlive/2018/texmf-dist/fonts/type1/public/cm-super/sfbx1200.pfb></usr/l
-ocal/texlive/2018/texmf-dist/fonts/type1/public/cm-super/sfbx1440.pfb></usr/loc
-al/texlive/2018/texmf-dist/fonts/type1/public/cm-super/sfrm0500.pfb></usr/local
-/texlive/2018/texmf-dist/fonts/type1/public/cm-super/sfrm1000.pfb></usr/local/t
-exlive/2018/texmf-dist/fonts/type1/public/cm-super/sfrm1200.pfb></usr/local/tex
-live/2018/texmf-dist/fonts/type1/public/cm-super/sfrm1728.pfb></usr/local/texli
-ve/2018/texmf-dist/fonts/type1/public/cm-super/sfti1000.pfb></usr/local/texlive
-/2018/texmf-dist/fonts/type1/public/cm-super/sftt0800.pfb></usr/local/texlive/2
-018/texmf-dist/fonts/type1/public/cm-super/sftt1000.pfb></usr/local/texlive/201
-8/texmf-dist/fonts/type1/public/txfonts/t1xbtt.pfb></usr/local/texlive/2018/tex
-mf-dist/fonts/type1/public/txfonts/t1xtt.pfb>
-Output written on webappcurricula.pdf (21 pages, 451118 bytes).
+{/usr/local/texlive/2018/texmf-dist/fonts/enc/dvips/cm-super/cm-super-t1.enc}
+</usr/local/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb><
+/usr/local/texlive/2018/texmf-dist/fonts/type1/public/cm-super/sfbx1000.pfb></u
+sr/local/texlive/2018/texmf-dist/fonts/type1/public/cm-super/sfbx1200.pfb></usr
+/local/texlive/2018/texmf-dist/fonts/type1/public/cm-super/sfbx1440.pfb></usr/l
+ocal/texlive/2018/texmf-dist/fonts/type1/public/cm-super/sfrm0500.pfb></usr/loc
+al/texlive/2018/texmf-dist/fonts/type1/public/cm-super/sfrm1000.pfb></usr/local
+/texlive/2018/texmf-dist/fonts/type1/public/cm-super/sfrm1200.pfb></usr/local/t
+exlive/2018/texmf-dist/fonts/type1/public/cm-super/sfrm1728.pfb></usr/local/tex
+live/2018/texmf-dist/fonts/type1/public/cm-super/sfti1000.pfb></usr/local/texli
+ve/2018/texmf-dist/fonts/type1/public/cm-super/sftt0800.pfb></usr/local/texlive
+/2018/texmf-dist/fonts/type1/public/cm-super/sftt1000.pfb></usr/local/texlive/2
+018/texmf-dist/fonts/type1/public/txfonts/t1xbtt.pfb></usr/local/texlive/2018/t
+exmf-dist/fonts/type1/public/txfonts/t1xtt.pfb>
+Output written on webappcurricula.pdf (21 pages, 450706 bytes).
 PDF statistics:
- 798 PDF objects out of 1000 (max. 8388607)
- 748 compressed objects within 8 object streams
- 472 named destinations out of 1000 (max. 500000)
- 224 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 790 PDF objects out of 1000 (max. 8388607)
+ 740 compressed objects within 8 object streams
+ 470 named destinations out of 1000 (max. 500000)
+ 208 words of extra memory for PDF output out of 10000 (max. 10000000)
 

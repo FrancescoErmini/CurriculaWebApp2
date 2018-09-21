@@ -1,5 +1,5 @@
 from flask import Flask, request, jsonify
-from models import  db, Curricula, Courses, Groups, Academicyears, Students, Studyplans #, StudyplansCourses #  CurriculaGroups, GroupsCourses,
+from models import  db, Curricula, Courses, Groups, Academicyears, Students, Studyplans, OtherCourses #, StudyplansCourses #  CurriculaGroups, GroupsCourses,
 from functools import wraps
 import string
 
@@ -8,7 +8,7 @@ def validate_curriculum(fn):
 	def decorated_view(*args, **kwargs):
 		
 		curriculum	= request.get_json()
-		
+
 		if curriculum['title'] == "":
 			return jsonify({"error": "title can not be empty"}), 500
 
