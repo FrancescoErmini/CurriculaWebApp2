@@ -156,6 +156,7 @@ def setCourse():
 @app.route('/course/', methods=['PUT'])
 @basic_auth.required
 @expects_json(course_schema)
+@validate_course
 def updateCourse():
 	try:
 		d = request.get_json()

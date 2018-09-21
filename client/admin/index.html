@@ -792,9 +792,9 @@ angular.module('admin', ['ngRoute','angular.filter'])
               selected_groups.push(group);
             }
         }
-        console.log(JSON.stringify(selected_groups));
 
         $scope.curriculum.groups = selected_groups;
+        console.log(JSON.stringify($scope.curriculum));
 
         dataFactory.setCurriculum($scope.curriculum)
               .then(function (response) {
@@ -864,9 +864,9 @@ angular.module('admin', ['ngRoute','angular.filter'])
               selected_groups.push(group);
             }
         }
-        console.log(JSON.stringify(selected_groups));
-
+       
         $scope.curriculum.groups = selected_groups;
+        console.log(JSON.stringify($scope.curriculum));
 
         dataFactory.updateCurriculum($routeParams.id, $scope.curriculum)
               .then(function (response) {
@@ -997,9 +997,9 @@ angular.module('admin', ['ngRoute','angular.filter'])
                 selected_courses.push(course);
               }
           }
-          console.log( JSON.stringify(selected_courses));
 
           $scope.group.courses = selected_courses;
+          console.log( JSON.stringify($scope.group));
 
           dataFactory.setGroup( $scope.group )
           .then(function (response) {
@@ -1057,9 +1057,10 @@ angular.module('admin', ['ngRoute','angular.filter'])
                 selected_courses.push(course);
               }
           }
-          console.log( JSON.stringify(selected_courses));
+          
 
           $scope.group.courses = selected_courses;
+          console.log( JSON.stringify($scope.group));
 
           dataFactory.updateGroup( $routeParams.id, $scope.group )
           .then(function (response) {
