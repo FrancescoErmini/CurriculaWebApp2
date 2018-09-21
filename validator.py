@@ -78,8 +78,14 @@ def validate_studyplan(fn):
         	if count < group.n:
         		return jsonify({"error": "group " + str(group.name) +" has " +str(count)+" courses but " + str(group.n) + " courses are expected for curriculum " +  str(curriculum.title) }),500
 
-        if len(data['othercourses']) > 2:
+        if len(data['othercourses']) != 2:
         	return jsonify({"error": "Over the free choice course number limit"}),500
+
+        #check if free choice courses are already been choosen in case the course has the same name but different code and cfu.
+        for othercourse in data['othercourses']:
+        	if ( othercourse['name'] in [ course['name'] for course in data['courses'] ]):
+        		return jsonify({"error": "You can't choose the same course with different cfu."}), 500
+
         
         #count cfu for courses within the curriculum
         cfu = 0

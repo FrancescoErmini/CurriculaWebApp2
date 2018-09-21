@@ -101,10 +101,12 @@ studyplan_schema = {
             'type': 'array',
             'items': {
                 'type': 'object',
-                'required': ['id','cfu'],
+                'required': ['id','name','cfu','ssd'],
                 'properties': {
                     'id': {'type': 'string'},
-                    'cfu': {'type':'number'}
+                    'name': {'type': 'string'},
+                    'cfu': {'type':'number'},
+                    'ssd': {'type': 'string'}
                 },
                 #'additionalProperties': false,
             },

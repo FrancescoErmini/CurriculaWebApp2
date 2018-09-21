@@ -394,8 +394,11 @@ def setStudyplan():
 		for c in data['othercourses']:
 			if OtherCourses.query.get(c['id']) is None:
 				othercourse = OtherCourses(id=c['id'], name=c['name'], cfu=c['cfu'], ssd=c['ssd'])
-			else:
-				othercourse = OtherCourses.query.get(c['id']);
+			else: #in case another student wrote wrong value for this course code 
+				othercourse = OtherCourses.query.get(c['id'])
+				othercourse.name = c['name']
+				othercourse.ssd = c['ssd']
+				othercourse.cfu = c['cfu']
 			studyplan.othercourses.append(othercourse)
 			# db.session.add(othercourse) ??
 

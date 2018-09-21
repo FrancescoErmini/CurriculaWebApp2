@@ -367,7 +367,7 @@ angular.module('app', ['ngRoute'])
             //pick checked courses by the student
             if( $scope.studentcourses[course.id] &&  $scope.studentcourses.hasOwnProperty(course.id) ) {
                // coursecounter[i]+=1;
-                allcourses.push({"id": course.id});
+                allcourses.push({"id": course.id, "name": course.name, "cfu": course.cfu, "ssd": course.ssd});
             }
           } //end loop in courses
         }
