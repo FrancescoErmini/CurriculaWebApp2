@@ -1,0 +1,67 @@
+#Auth
+#error: wrong password
+curl --header "Content-Type: application/json" --anyauth --user admin:admin2 --request POST --data '{"id":"2019-2020", "start": "Mon, 03 Sep 2019 00:00:00 GMT", "end": "Mon, 02 Sep 2020 00:00:00 GMT"}' \http://localhost:5000/academicyear/
+#error: wonrg user
+curl --header "Content-Type: application/json" --anyauth --user admin2:admin --request POST --data '{"id":"2019-2020", "start": "Mon, 03 Sep 2019 00:00:00 GMT", "end": "Mon, 02 Sep 2020 00:00:00 GMT"}' \http://localhost:5000/academicyear/
+
+#Academic year
+
+#error
+curl --header "Content-Type: application/json" --anyauth --user admin:admin --request POST --data '{"id":"", "start": "Mon, 03 Sep 2019 00:00:00 GMT", "end": "Mon, 02 Sep 2020 00:00:00 GMT"}' \http://localhost:5000/academicyear/
+
+#error
+curl --header "Content-Type: application/json" --anyauth --user admin:admin --request POST --data '{"id":"2019/2020", "start": "Mon, 03 Sep 2019 00:00:00 GMT", "end": "Mon, 02 Sep 2020 00:00:00 GMT"}' \http://localhost:5000/academicyear/
+
+#error
+curl --header "Content-Type: application/json" --anyauth --user admin:admin --request POST --data '{"id":"2050-2051", "start": "Mon, 03 Sep 2019 00:00:00 GMT", "end": "Mon, 02 Sep 2020 00:00:00 GMT"}' \http://localhost:5000/academicyear/
+
+#error
+curl --header "Content-Type: application/json" --anyauth --user admin:admin --request POST --data '{"id":"2019-2021", "start": "Mon, 03 Sep 2019 00:00:00 GMT", "end": "Mon, 02 Sep 2020 00:00:00 GMT"}' \http://localhost:5000/academicyear/
+
+#ok
+curl --header "Content-Type: application/json" --anyauth --user admin:admin --request POST --data '{"id":"2019-2020", "start": "Mon, 03 Sep 2019 00:00:00 GMT", "end": "Mon, 02 Sep 2020 00:00:00 GMT"}' \http://localhost:5000/academicyear/
+
+curl --header "Content-Type: application/json" --request GET \http://localhost:5000/academicyear/
+
+#Curriculum
+#error duplicate courses in curriculum:
+
+curl --header "Content-Type: application/json" --anyauth --user admin:admin --request PUT --data '{"id":25,"title":"INTERACTIVE AND MULTIMEDIA SYSTEMS","ac":"2018-2019","desc":"Questo ambito si focalizza sullo studio di modelli e sistemi per abilitare l’accesso a servizi e contenuti digitali attraverso interfacce naturali, integrate con soluzioni di realtà virtuale o aumentata in grado di trarre vantaggio da una pluralità di media e modalità di interazione. Modelli e tecniche per il progetto di sistemi di human-centered integrati con dispositivi mobili e sensori contactless, modelli per l’analisi e test di usabilità dei sistemi.","groups":[{"cfu":6,"id":33,"n":2,"name":"group 5 - telecomunicazioni 2 SW"}, {"id":32,"cfu":6, "n":2, "name":"Gruppo 4 - telecomunicazioni"}]}'  \http://localhost:5000/curriculum/25/
+
+
+#Groups
+
+#error n is less than courses for this group
+
+curl --header "Content-Type: application/json" --anyauth --user admin:admin --request POST --data '{"cfu":6,"courses":[{"ac":"2018-2019","cfu":6,"id":"B024339","name":"TELECOMMUNICATION NETWORKS","semester":2,"ssd":"ING-INF/03","url":"url","year":2,"$$hashKey":"00R"},{"ac":"2018-2019","cfu":6,"id":"B028461","name":"SECURITY AND KNOWLEDGE MANAGEMENT","semester":1,"ssd":"ING-INF/05","url":"url","year":1,"$$hashKey":"01T"}],"id":33,"n":3,"name":"group 5 - telecomunicazioni 2 SW"}' \http://localhost:5000/group/
+
+#error no courses in group ( or json schema not resptected )
+curl --header "Content-Type: application/json" --anyauth --user admin:admin --request POST --data '{"cfu":6,"courses":[],"id":33,"n":3,"name":"group 5 - telecomunicazioni 2 SW"}' \http://localhost:5000/group/
+
+
+
+
+#Course
+
+#error id null
+curl --header "Content-Type: application/json" --anyauth --user admin:admin --request POST --data '{ "id": "","name": "corso21","cfu": 6,"ssd": "SSD", "year": 1,"semester": 1,"url": "url", "ac": "2018-2019" }'  \http://localhost:5000/course/
+
+#error id too long
+curl --header "Content-Type: application/json" --anyauth --user admin:admin --request POST --data '{ "id": "12345678","name": "corso21","cfu": 6,"ssd": "SSD", "year": 1,"semester": 1,"url": "url", "ac": "2018-2019" }'  \http://localhost:5000/course/
+
+
+
+#Studyplan
+#add validation to avoid duplicate courses in case of same name but different cfu ant thus different id: Machine Learning is both in #courses both in othercourses
+
+#error
+curl --header "Content-Type: application/json"  --request POST --data '{"student":"3211880","curriculum":24,"courses":[{"id":"B024317","name":"MACHINE LEARNING","cfu":9,"ssd":"ING-INF/05"},{"id":"B024321","name":"SOFTWARE DEPENDABILITY","cfu":9,"ssd":"ING-INF/05"},{"id":"B028462","name":"BIG DATA ARCHITECTURES","cfu":9,"ssd":"ING-INF/05"},{"id":"B024275","name":"DATA AND DOCUMENT MINING","cfu":9,"ssd":"ING-INF/05"},{"id":"B024313","name":"PARALLEL COMPUTING","cfu":9,"ssd":"ING-INF/05"},{"id":"B028460","name":"SECURITY AND KNOWLEDGE MANAGEMENT","cfu":9,"ssd":"ING-INF/05"},{"id":"B028468","name":"INDUSTRIAL AUTOMATION","cfu":6,"ssd":"ING-INF/04"},{"id":"B027206","name":"DATA WAREHOUSING","cfu":6,"ssd":"INF/01"},{"id":"B024333","name":"OPTIMIZATION METHODS","cfu":6,"ssd":"MAT/09"},{"id":"B026371","name":"INFORMATION THEORY","cfu":6,"ssd":"ING-INF/03"},{"id":"B028461","name":"SECURITY AND KNOWLEDGE MANAGEMENT","cfu":6,"ssd":"ING-INF/05"}],"othercourses":[{"id":"B024318","name":"MACHINE LEARNING","ssd":"ING-INF/05","cfu":6},{"id":"b000005","name":"c5","ssd":"ssd","cfu":6}]}'  \http://localhost:5000/studyplan/
+
+
+
+
+curl --header "Content-Type: application/json" --request GET \http://localhost:5000/studyplan/<matricola>/
+
+
+
+
