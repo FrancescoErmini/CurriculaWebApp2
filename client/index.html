@@ -70,47 +70,73 @@
         <td class="extrasmall"> <input type="checkbox" ng-model="studentcourses[c.id]"> </td>
         <td class="smallcell">  {{c.id}} </td>
         <td class="bigcell">  <a href="{{c.url}}"  target="_blank"> {{c.name}}  </a> </td>
-        <td class="smallcell"> {{c.year}} </td>
-        <td class="smallcell">  {{c.semester}} </td>
+        <td class="picocell"> {{c.year}} </td>
+        <td class="picocell">  {{c.semester}} </td>
         <td class="smallcell"> {{c.ssd}} </td>
 
         </tr>
         </table>
-   </li>
+  </li>
+  <li class="list-group-item list-group-flush">
+    <h4> Gruppo 5 - corsi a scelta libera: scegli 2 corsi per un totale di 12 cfu:  </h4>
+    <form style="border: 1px solid #e0e0e0">
+      <i> Per i corsi di ingegneria puoi usare la lista per il riempimento automatico.</i>
+      <div class="row">
+        
+          <label class="form-group col-md-1" for="course1">corso 1</label> 
+          <select ng-model="othercourse[0]" ng-change="autofill(0)" class="form-group col-md-5 custom-select" id="course1">  
+              <option ng-repeat="course in courses track by $index" value="{{$index}}"> 
+                {{course.id}} | {{course.name}} | {{course.cfu}} cfu | {{course.ssd}}
+              </option>
+          </select>
+       
+          <label class="form-group col-md-1" for="course2">corso 2</label> 
+          <select ng-model="othercourse[1]"  ng-change="autofill(1)" class="form-group col-md-5 custom-select" id="course2">  
+              <option ng-repeat="course in courses track by $index" value="{{$index}}"> 
+                {{course.id}} | {{course.name}} | {{course.cfu}} cfu | {{course.ssd}}
+              </option>
+          </select>
+       
+      </div>
+      <br>
+      <i> Altrimenti inserisci manualmente le informazioni: </i>
+
+      <div class="row">
+        <label class="form-group col-md-1"> Codice: </label> 
+        <input class="form-group col-md-2" type="text" ng-model="studyplan.othercourses[0].id">
+
+        <label class="form-group col-md-1"> Nome: </label> 
+        <input class="form-group col-md-2" type="text" ng-model="studyplan.othercourses[0].name">
+
+        <label class="form-group col-md-1"> SSD: </label> 
+        <input class="form-group col-md-2" type="text" ng-model="studyplan.othercourses[0].ssd">
+
+        <label class="form-group col-md-1"> CFU: </label> 
+        <input class="form-group col-md-2" type="number" ng-model="studyplan.othercourses[0].cfu">
+      </div>
+      <div class="row">
+        <label class="form-group col-md-1"> Codice: </label> 
+        <input class="form-group col-md-2" type="text" ng-model="studyplan.othercourses[1].id">
+
+        <label class="form-group col-md-1"> Nome: </label> 
+        <input class="form-group col-md-2" type="text" ng-model="studyplan.othercourses[1].name">
+
+        <label class="form-group col-md-1"> SSD: </label> 
+        <input class="form-group col-md-2" type="text" ng-model="studyplan.othercourses[1].ssd">
+
+        <label class="form-group col-md-1"> CFU: </label> 
+        <input class="form-group col-md-2" type="number" ng-model="studyplan.othercourses[1].cfu">
+      </div>
+     
+    </form>
+  </li>
 </ul>  
 </br>
 
 
 
-<form style="border: 1px solid #e0e0e0">
-  <h4> Inserisci due corsi a scelta libera da 6 cfu </h4>
-  <div class="row">
-    <label class="form-group col-md-1"> Codice: </label> 
-    <input class="form-group col-md-2" type="text" ng-model="studyplan.othercourses[0].id">
 
-    <label class="form-group col-md-1"> Nome: </label> 
-    <input class="form-group col-md-2" type="text" ng-model="studyplan.othercourses[0].name">
 
-    <label class="form-group col-md-1"> SSD: </label> 
-    <input class="form-group col-md-2" type="text" ng-model="studyplan.othercourses[0].ssd">
-
-    <label class="form-group col-md-1"> CFU: </label> 
-    <input class="form-group col-md-2" type="number" ng-model="studyplan.othercourses[0].cfu">
-  </div>
-  <div class="row">
-    <label class="form-group col-md-1"> Codice: </label> 
-    <input class="form-group col-md-2" type="text" ng-model="studyplan.othercourses[1].id">
-
-    <label class="form-group col-md-1"> Nome: </label> 
-    <input class="form-group col-md-2" type="text" ng-model="studyplan.othercourses[1].name">
-
-    <label class="form-group col-md-1"> SSD: </label> 
-    <input class="form-group col-md-2" type="text" ng-model="studyplan.othercourses[1].ssd">
-
-    <label class="form-group col-md-1"> CFU: </label> 
-    <input class="form-group col-md-2" type="number" ng-model="studyplan.othercourses[1].cfu">
-  </div>
-</form>
 
 <form class="form-row">
 <legend> Student data: </legend>
@@ -124,6 +150,8 @@
 
 <label class="form-group col-md-1"> Cognome: </label> 
 <input class="form-group col-md-3" type="text" ng-model="student.lastname">
+
+
 
 </form>
 
@@ -245,6 +273,10 @@ angular.module('app', ['ngRoute'])
     var urlBase = 'http://localhost:5000';
     var dataFactory = {};
 
+    dataFactory.getCourses = function () {
+        return $http.get(urlBase + '/course/');
+    };
+
     dataFactory.getCurricula = function () {
         return $http.get(urlBase + '/curriculum/');
     };
@@ -294,6 +326,9 @@ angular.module('app', ['ngRoute'])
       $scope.curriculumcourses; //populate the course list with received data
       $scope.studentcourses = {}; //arrayo of true|false: true if html checkbox is checked, false if unchecked.
 
+      //Autofill othercourses field with data from courses
+      $scope.courses; 
+      $scope.othercourse = [] 
 
       $scope.student = { 
         "id": "", 
@@ -305,17 +340,24 @@ angular.module('app', ['ngRoute'])
         "student": "",
         "curriculum": 0,
         "courses": null,
-        "othercourses": [{"id": "", "name": "", "ssd": "", "cfu": 0 }, {"id": "", "name": "", "ssd": "", "cfu": 0}]
+        "othercourses": [{"id": "", "name": "", "ssd": "", "cfu": 0}, {"id": "", "name": "", "ssd": "", "cfu": 0}]
       }
 
-
+    
 
       $scope.curriculum_id = $routeParams.id
 
-      var valid_student, valid_studyplan = false;
-
-    
       getCurriculumCourses($scope.curriculum_id);
+      getCourses();
+
+      function getCourses() {
+        dataFactory.getCourses()
+        .then( function(response) {
+          $scope.courses = response.data.courses;
+        }, function (error){
+          $scope.status =  JSON.stringify(error.data);
+        });
+      }
 
       function getCurriculumCourses(curriculum_id) {
           dataFactory.getCurriculumCourses(curriculum_id)
@@ -351,60 +393,68 @@ angular.module('app', ['ngRoute'])
 
 
 
-      function setStudyplan(id) {
+    function setStudyplan(id) {
 
-        $scope.studyplan.student = $scope.student.id;
-        $scope.studyplan.curriculum =  parseInt($routeParams.id);
-                           
-        var allcourses = [];
-       // var coursecounter=[];
-        //iterate groups in a curriculum
-        for( var i=0; i < $scope.curriculumcourses.groups.length; i++ ){
-          //coursecounter[i]=0;
-          //iterate all courses in  a group
-          for( var k=0; k < $scope.curriculumcourses.groups[i].courses.length; k++) {
-            var course =  $scope.curriculumcourses.groups[i].courses[k];
-            //pick checked courses by the student
-            if( $scope.studentcourses[course.id] &&  $scope.studentcourses.hasOwnProperty(course.id) ) {
-               // coursecounter[i]+=1;
-                allcourses.push({"id": course.id, "name": course.name, "cfu": course.cfu, "ssd": course.ssd});
-            }
-          } //end loop in courses
-        }
-        $scope.studyplan.courses = allcourses;
-        console.log(JSON.stringify($scope.studyplan));
-
-        //assemble json, part 3
-        /*
-        for( index = 0; index < coursecounter.length; index++){
-          if( coursecounter[index] < $scope.curriculumcourses.groups[index].n ) {
-
-            alert("group " + String($scope.curriculumcourses.groups[index].name) + " has " + String(coursecounter[index]) + " courses but " + String($scope.curriculumcourses.groups[index].n) + " expected");
-            
-            valid_studyplan = false;
-            return;
+      $scope.studyplan.student = $scope.student.id;
+      $scope.studyplan.curriculum =  parseInt($routeParams.id);
+                         
+      var allcourses = [];
+     // var coursecounter=[];
+      //iterate groups in a curriculum
+      for( var i=0; i < $scope.curriculumcourses.groups.length; i++ ){
+        //coursecounter[i]=0;
+        //iterate all courses in  a group
+        for( var k=0; k < $scope.curriculumcourses.groups[i].courses.length; k++) {
+          var course =  $scope.curriculumcourses.groups[i].courses[k];
+          //pick checked courses by the student
+          if( $scope.studentcourses[course.id] &&  $scope.studentcourses.hasOwnProperty(course.id) ) {
+             // coursecounter[i]+=1;
+              allcourses.push({"id": course.id, "name": course.name, "cfu": course.cfu, "ssd": course.ssd });
           }
-        }
-        
-        var json_output = {
-          student:  $scope.student.id,
-          curriculum: $scope.curriculum_id ,
-          courses: allcourses
-        }
-        */
-        
-        dataFactory.setStudyplan($scope.studyplan)
-        .then(function (response) {
-            $scope.status = '';
-            $scope.studyplancourses = response.data;
+        } //end loop in courses
+      }
+      $scope.studyplan.courses = allcourses;
+      console.log(JSON.stringify($scope.studyplan));
 
-            redirectTo('/studyplan/'+ $scope.student.id);
-            
-        }, function(error) {
-            $scope.status = JSON.stringify(error.data); 
-        });
-      };
+      //assemble json, part 3
+      /*
+      for( index = 0; index < coursecounter.length; index++){
+        if( coursecounter[index] < $scope.curriculumcourses.groups[index].n ) {
 
+          alert("group " + String($scope.curriculumcourses.groups[index].name) + " has " + String(coursecounter[index]) + " courses but " + String($scope.curriculumcourses.groups[index].n) + " expected");
+          
+          valid_studyplan = false;
+          return;
+        }
+      }
+      
+      var json_output = {
+        student:  $scope.student.id,
+        curriculum: $scope.curriculum_id ,
+        courses: allcourses
+      }
+      */
+      
+      dataFactory.setStudyplan($scope.studyplan)
+      .then(function (response) {
+          $scope.status = '';
+          $scope.studyplancourses = response.data;
+
+          redirectTo('/studyplan/'+ $scope.student.id);
+          
+      }, function(error) {
+          $scope.status = JSON.stringify(error.data); 
+      });
+    };
+
+
+    $scope.autofill = function(index){
+        $scope.studyplan.othercourses[index].id =  $scope.courses[$scope.othercourse[index]].id;
+        $scope.studyplan.othercourses[index].name =  $scope.courses[$scope.othercourse[index]].name;
+        $scope.studyplan.othercourses[index].ssd =  $scope.courses[$scope.othercourse[index]].ssd;
+        $scope.studyplan.othercourses[index].cfu =  $scope.courses[$scope.othercourse[index]].cfu;
+    }
+    
     function redirectTo(_url_) {
       $location.path(_url_);
     }

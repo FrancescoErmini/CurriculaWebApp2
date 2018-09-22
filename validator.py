@@ -15,7 +15,6 @@ def validate_curriculum(fn):
 		if len(curriculum['groups']) == 0 :
 			return jsonify({"error": "No groups. specified. Create groups first, then specify curriculum groups."}), 500
 
-
 		uniqueCourses = []
 		for g in curriculum['groups']:
 			group = Groups.query.get(g['id'])
@@ -24,6 +23,14 @@ def validate_curriculum(fn):
 					uniqueCourses.append(course.id)
 				else:
 					return jsonify({"error": "duplicate courses in curriculum" + str(len(uniqueCourses))}),500
+
+		cfu_per_group = 0
+		for g in curriculum['groups']:
+			cfu_per_group += ( int(g['cfu']) * int(g['n']) )
+		if cfu_per_group < 84:
+			return jsonify({"error": "Misconfiguration: the sum of cfu is less then the needed value"}),500
+
+
 		return fn(*args, **kwargs)
 	return decorated_view
 
@@ -37,7 +44,7 @@ def validate_group(fn):
 			return jsonify({"error":"No courses specified. Create course first, then specify group courses."}), 500
 		
 		if group['n'] < 1:
-			return jsonify({"error":"N must be a positive number"}), 500
+			return jsonify({"error":"N must be more or equals to 2"}), 500
 
 		if len(group['courses']) <= group['n']:
 			return jsonify({"error": "group has " + str(len(group['courses'])) + " courses but " + str(group['n']) + " courses are expected."}), 500
@@ -136,8 +143,7 @@ def validate_course(fn):
         	return jsonify({"error":"Course code can not be empty"}),500
         if len(course_id) != 7:
         	return jsonify({"error":"Course code is 7 char length"}),500
-        else:
-        	pass
+
         return fn(*args, **kwargs)
     return decorated_view
 
@@ -154,7 +160,6 @@ def validate_student(fn):
         	return jsonify({"error":"Student id can not be empty"}),500
         if len(student_id) != 7:
         	return jsonify({"error":"Student id is 7 char length"}),500
-        else:
-        	pass
+  
         return fn(*args, **kwargs)
     return decorated_view

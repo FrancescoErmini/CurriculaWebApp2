@@ -40,11 +40,11 @@ legend {
 
 
 .picocell {
-  min-width: 2%;
+  min-width: 5%;
   text-align: center;
 }
 .smallcell{
-  min-width: 10%;
+  min-width: 20%;
   text-align: center;
 
 }

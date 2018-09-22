@@ -54,7 +54,7 @@ curl --header "Content-Type: application/json" --anyauth --user admin:admin --re
 #Studyplan
 #add validation to avoid duplicate courses in case of same name but different cfu ant thus different id: Machine Learning is both in #courses both in othercourses
 
-#error
+#error: Machina learing is duplicated with different code ( 6 cfu and 9 cfu )
 curl --header "Content-Type: application/json"  --request POST --data '{"student":"3211880","curriculum":24,"courses":[{"id":"B024317","name":"MACHINE LEARNING","cfu":9,"ssd":"ING-INF/05"},{"id":"B024321","name":"SOFTWARE DEPENDABILITY","cfu":9,"ssd":"ING-INF/05"},{"id":"B028462","name":"BIG DATA ARCHITECTURES","cfu":9,"ssd":"ING-INF/05"},{"id":"B024275","name":"DATA AND DOCUMENT MINING","cfu":9,"ssd":"ING-INF/05"},{"id":"B024313","name":"PARALLEL COMPUTING","cfu":9,"ssd":"ING-INF/05"},{"id":"B028460","name":"SECURITY AND KNOWLEDGE MANAGEMENT","cfu":9,"ssd":"ING-INF/05"},{"id":"B028468","name":"INDUSTRIAL AUTOMATION","cfu":6,"ssd":"ING-INF/04"},{"id":"B027206","name":"DATA WAREHOUSING","cfu":6,"ssd":"INF/01"},{"id":"B024333","name":"OPTIMIZATION METHODS","cfu":6,"ssd":"MAT/09"},{"id":"B026371","name":"INFORMATION THEORY","cfu":6,"ssd":"ING-INF/03"},{"id":"B028461","name":"SECURITY AND KNOWLEDGE MANAGEMENT","cfu":6,"ssd":"ING-INF/05"}],"othercourses":[{"id":"B024318","name":"MACHINE LEARNING","ssd":"ING-INF/05","cfu":6},{"id":"b000005","name":"c5","ssd":"ssd","cfu":6}]}'  \http://localhost:5000/studyplan/
 
 
