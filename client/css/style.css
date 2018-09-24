@@ -1,33 +1,17 @@
-
-/*table, th, td {
-         border: 1px solid black;
-         text-align: center;
-}*/
-
 .error {
   color: red;
 }
-/*
-.mystyle table td {
-  text-align: center;
-}
-input[type=checkbox]{
 
-}
-input[type=number] {
-  max-width: 100px;
-}
-input[type=button] {
-  
-}
-*/
-h4, h2 {
-  margin-top: 20px;
-  margin-bottom: 20px;
-}
 h2 {
+  padding: 40px 0 40px 0;
   text-align: center;
-  padding: 20px;
+}
+h4 {
+  padding: 10px 0 10px 0;
+}
+
+p {
+  -bottom: 10px;
 }
 
 form {
@@ -36,6 +20,21 @@ form {
 }
 legend {
 
+}
+
+.nav-link.active {
+  color:  #007bff !important; 
+}
+.nav-tabs {
+  background-color: #F8F8F8 !important;
+}
+
+.nav-tabs > a:hover{
+  color:  #007bff  !important;
+  background-color: #FFFFFF !important;
+}
+.border{
+  border: 1px solid #e0e0e0;
 }
 
 

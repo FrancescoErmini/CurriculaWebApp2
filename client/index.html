@@ -52,14 +52,14 @@
 </div>
 </script>
 <script type="text/ng-template" id="/curriculum.html">
-<div class="container">
+<div class="container-fluid">
 <h2> {{curriculumcourses.curriculum.title}}</h2>
 <ul class="list-group">
   <li ng-repeat="g in curriculumcourses.groups track by $index" class="list-group-item list-group-flush">
-   <h4> {{g.name}}: Scegli {{g.n}} esami da {{g.cfu}} cfu tra: </h4>
-       <table  class="table table-bordered">
+   <h4>Scegli {{g.n}} esami da {{g.cfu}} cfu dalla tabella {{g.name}}:</h4>
+       <table  class="table table-bordered table-responsive table-condensed">
         <tr>
-          <th></th>
+          <th class=></th>
           <th>codice</th>
           <th>nome</th>
           <th>anno</th>
@@ -67,104 +67,114 @@
           <th>ssd</th>
         </tr>
        <tr  ng-repeat="c in g.courses |  orderBy:['year','semester'] ">
-        <td class="extrasmall"> <input type="checkbox" ng-model="studentcourses[c.id]"> </td>
+        <td class="picocell"> <input type="checkbox" ng-model="studentcourses[c.id]"> </td>
         <td class="smallcell">  {{c.id}} </td>
         <td class="bigcell">  <a href="{{c.url}}"  target="_blank"> {{c.name}}  </a> </td>
         <td class="picocell"> {{c.year}} </td>
         <td class="picocell">  {{c.semester}} </td>
         <td class="smallcell"> {{c.ssd}} </td>
-
         </tr>
         </table>
   </li>
   <li class="list-group-item list-group-flush">
-    <h4> Gruppo 5 - corsi a scelta libera: scegli 2 corsi per un totale di 12 cfu:  </h4>
-    <form style="border: 1px solid #e0e0e0">
-      <i> Per i corsi di ingegneria puoi usare la lista per il riempimento automatico.</i>
-      <div class="row">
+    
+    <h4>Scegli 2 esami per un totale di 12 cfu dalla tabella corsi a scelta libera:</h4>
+    <br>
+      <nav class="nav nav-tabs nav-justified" style="backgroud:red">
+         <a class="nav-item nav-link active" data-toggle="tab" data-target="#Tab1"> Corsi di Ingegneria </a>
+         <a class="nav-item nav-link" data-toggle="tab" data-target="#Tab2"> Altro </a>
+      </nav>
+
+      <div class="tab-content">
         
-          <label class="form-group col-md-1" for="course1">corso 1</label> 
-          <select ng-model="othercourse[0]" ng-change="autofill(0)" class="form-group col-md-5 custom-select" id="course1">  
+        <div id="Tab1" class="tab-pane fade show active border" style="padding:20px"> 
+          <div class="row">
+            <label class="col-md-2"> corso 1: </label>
+            <select ng-model="othercourse[0]"  ng-change="autofill(0)" class="form-group col-md-8 custom-select" id="course1">  
+                <option ng-repeat="course in courses track by $index" value="{{$index}}"> 
+                  {{course.id}} | {{course.name}} | {{course.cfu}} cfu | {{course.ssd}}
+                </option>
+            </select>
+          </div>
+          <div class="row">
+            <label class="col-md-2"> corso 2: </label>
+            <select ng-model="othercourse[1]"  ng-change="autofill(1)" class="form-group col-md-8 custom-select" id="course2">  
               <option ng-repeat="course in courses track by $index" value="{{$index}}"> 
                 {{course.id}} | {{course.name}} | {{course.cfu}} cfu | {{course.ssd}}
               </option>
-          </select>
-       
-          <label class="form-group col-md-1" for="course2">corso 2</label> 
-          <select ng-model="othercourse[1]"  ng-change="autofill(1)" class="form-group col-md-5 custom-select" id="course2">  
-              <option ng-repeat="course in courses track by $index" value="{{$index}}"> 
-                {{course.id}} | {{course.name}} | {{course.cfu}} cfu | {{course.ssd}}
-              </option>
-          </select>
-       
+            </select>
+          </div>
+        </div>
+        <div id="Tab2" class="tab-pane fade border">
+          <p style="text-align:center">Corso 1</p>
+          <form class="form-row">
+
+              <span style="padding: 0 20px 0 10px;"> id: </span>
+              <input class="form-group col-md-2" type="text" ng-model="studyplan.othercourses[0].id">
+
+              <span style="padding: 0 20px 0 10px;">Nome: </span>
+              <input class="form-group col-md-5" type="text" ng-model="studyplan.othercourses[0].name">
+
+              <span style="padding: 0 20px 0 10px;">SSD: </span>
+              <input class="form-group col-md-1" type="text" ng-model="studyplan.othercourses[0].ssd">
+
+              <span style="padding: 0 20px 0 10px;">CFU: </span>
+              <input class="form-group col-md-1" type="number" ng-model="studyplan.othercourses[0].cfu">
+                 
+          </form>
+          <hr>
+          <p style="text-align:center">Corso 2</p>
+          <form class="form-row">
+
+              <span style="padding: 0 20px 0 10px;"> id: </span>
+              <input class="form-group col-md-2" type="text" ng-model="studyplan.othercourses[1].id">
+
+              <span style="padding: 0 20px 0 10px;">Nome: </span>
+              <input class="form-group col-md-5" type="text" ng-model="studyplan.othercourses[1].name">
+
+              <span style="padding: 0 20px 0 10px;">SSD: </span>
+              <input class="form-group col-md-1" type="text" ng-model="studyplan.othercourses[1].ssd">
+
+              <span style="padding: 0 20px 0 10px;">CFU: </span>
+              <input class="form-group col-md-1" type="number" ng-model="studyplan.othercourses[1].cfu">
+                 
+          </form>
+        </div>
       </div>
-      <br>
-      <i> Altrimenti inserisci manualmente le informazioni: </i>
-
-      <div class="row">
-        <label class="form-group col-md-1"> Codice: </label> 
-        <input class="form-group col-md-2" type="text" ng-model="studyplan.othercourses[0].id">
-
-        <label class="form-group col-md-1"> Nome: </label> 
-        <input class="form-group col-md-2" type="text" ng-model="studyplan.othercourses[0].name">
-
-        <label class="form-group col-md-1"> SSD: </label> 
-        <input class="form-group col-md-2" type="text" ng-model="studyplan.othercourses[0].ssd">
-
-        <label class="form-group col-md-1"> CFU: </label> 
-        <input class="form-group col-md-2" type="number" ng-model="studyplan.othercourses[0].cfu">
-      </div>
-      <div class="row">
-        <label class="form-group col-md-1"> Codice: </label> 
-        <input class="form-group col-md-2" type="text" ng-model="studyplan.othercourses[1].id">
-
-        <label class="form-group col-md-1"> Nome: </label> 
-        <input class="form-group col-md-2" type="text" ng-model="studyplan.othercourses[1].name">
-
-        <label class="form-group col-md-1"> SSD: </label> 
-        <input class="form-group col-md-2" type="text" ng-model="studyplan.othercourses[1].ssd">
-
-        <label class="form-group col-md-1"> CFU: </label> 
-        <input class="form-group col-md-2" type="number" ng-model="studyplan.othercourses[1].cfu">
-      </div>
-     
-    </form>
   </li>
 </ul>  
 </br>
 
 
 
+<h4> Inserisci dati studente: </h4>
+<form class="form-row border">
 
+  <label class="form-group col-md-1"> Matricola: </label>
+  <input class="form-group col-md-3" type="text" ng-model="student.id">
 
+  <label class="form-group col-md-1"> Nome: </label>
+  <input class="form-group col-md-3" type="text" ng-model="student.firstname">
 
-<form class="form-row">
-<legend> Student data: </legend>
- 
-
-<label class="form-group col-md-1"> Matricola: </label>
-<input class="form-group col-md-3" type="text" ng-model="student.id">
-
-<label class="form-group col-md-1"> Nome: </label>
-<input class="form-group col-md-3" type="text" ng-model="student.firstname">
-
-<label class="form-group col-md-1"> Cognome: </label> 
-<input class="form-group col-md-3" type="text" ng-model="student.lastname">
-
-
+  <label class="form-group col-md-1"> Cognome: </label> 
+  <input class="form-group col-md-3" type="text" ng-model="student.lastname">
 
 </form>
 
 <div class="row">
+
     <div class="col">
     <input type="button" value="Home" class="col btn" ng-click="goHome()"> 
     </div>
+
     <div class="col">
       <input type="button"  value="valida il piano" ng-click="submitstudyplan()" class="btn btn-outline-primary col" >
     </div>
+
 </div>
 
  <p class="error"> {{status}}</p>
+
 </div>
 </script>
 <script type="text/ng-template" id="/studyplan.html">
@@ -255,6 +265,16 @@
 </div>
  <p class="error"> {{status}} </p>
 </div>
+</script>
+
+<script type="text/ng-template" id="/error.html">
+  <div class="container">
+
+  <h2> Error: route </h2>
+  <br>
+  <div style="text-align:center">
+    <p> Torna a:  </i> <a href="#"> home page </p> 
+  </div>
 </script>
 
 <script type="text/ng-template" id ="/student.html">
@@ -535,8 +555,14 @@ angular.module('app', ['ngRoute'])
       templateUrl: '/student.html',
       controller: 'student',
     })
+    .otherwise({
+        templateUrl: '/error.html'
+    });
 });
 </script>
 
+
 </body>
+
+</script>
 </html>

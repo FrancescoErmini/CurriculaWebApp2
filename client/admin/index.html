@@ -562,7 +562,30 @@
   </table>
 </div>
 </script>
-<!--https://weblogs.asp.net/dwahlin/using-an-angularjs-factory-to-interact-with-a-restful-service-->
+
+<script type="text/ng-template" id="/error.html">
+ <h2> Error: route </h2>
+ <p> Allowed url are: </p>
+  <ul>
+   <li>
+      <a href="#">Home</a>
+    </li>
+    <li>
+      <a href="#curriculum">Curricula</a>
+    </li>
+    <li>
+      <a href="#group">Groups</a>
+    </li>
+    <li>
+      <a href="#course">Courses</a>
+    </li>
+    <li>
+      <a href="#academicyear">Academic years</a>
+    </li>
+  </ul>
+
+</script>
+
 <script>
 angular.module('admin', ['ngRoute','angular.filter'])
 
@@ -578,7 +601,7 @@ angular.module('admin', ['ngRoute','angular.filter'])
 })
 
 //---------------
-// Factory
+// Factory https://weblogs.asp.net/dwahlin/using-an-angularjs-factory-to-interact-with-a-restful-service
 //---------------
 
 .factory('dataFactory', ['$http', 'myauth', function($http, myauth) {
@@ -1292,6 +1315,9 @@ angular.module('admin', ['ngRoute','angular.filter'])
     .when('/academicyear', {
       templateUrl: '/academicyear.html',
       controller: 'academicyear'
+    })
+    .otherwise({
+      templateUrl : '/error.html'
     });
 });
 </script>
