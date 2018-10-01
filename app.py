@@ -1,4 +1,4 @@
-from flask import Flask, flash, redirect, render_template, request, url_for, jsonify, json
+from flask import Flask, flash, redirect, render_template, request, url_for, jsonify, json , current_app
 from models import  db, Curricula, Courses, Groups, Academicyears,  Students, Studyplans, OtherCourses# StudyplansCourses #CurriculaGroups, GroupsCourses,
 from functools import wraps
 from flask_expects_json import expects_json
@@ -66,6 +66,9 @@ GET    | /curriculum/<int:curriculum_id>/courses/                               
 POST   | /studyplan/						| studyplan_schema |  studyplan_schema | submit the studyplan to validate courses.
 '''
 
+@app.route('/')
+def hello_world():
+    return current_app.send_static_file('index.html')
 
 @app.route('/academicyear/', methods=['GET'])
 def getAcademicyears():
