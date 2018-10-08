@@ -426,7 +426,7 @@ def getStudyplan(student_id):
 
 	except Exception as e:
 		return jsonify({"error": str(e)}),500
-	return jsonify({"id": studyplan.id, "student": {"id": student.id, "firstname": student.firstname, "lastname": student.lastname }, "curriculum": {"id": curriculum.id, "title": curriculum.title, "ac": curriculum.ac}, "courses": [{"id": c.id, "name": c.name, "ssd": c.ssd, "url": c.url, "cfu": c.cfu, "year": c.year, "semester": c.semester} for c in studyplan.courses ], "othercourses":[ {"id": oc.id, "name": oc.name, "ssd": oc.ssd, "cfu": oc.cfu} for oc in studyplan.othercourses]}),201	
+	return jsonify({"id": studyplan.id, "student": {"id": student.id, "firstname": student.firstname, "lastname": student.lastname }, "curriculum": {"id": curriculum.id, "title": curriculum.title, "ac": curriculum.ac}, "courses": [{"id": c.id, "name": c.name, "ssd": c.ssd, "url": c.url, "cfu": c.cfu, "year": c.year, "semester": c.semester} for c in studyplan.courses ], "othercourses":[ {"id": oc.id, "name": oc.name, "ssd": oc.ssd, "cfu": oc.cfu} for oc in studyplan.othercourses], "note": studyplan.note}),201	
 
 @app.route('/studyplan/<string:student_id>/', methods=['DELETE'])
 def deleteStudyplan(student_id):
@@ -440,4 +440,4 @@ def deleteStudyplan(student_id):
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host='0.0.0.0', port=80)

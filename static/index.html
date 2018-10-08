@@ -163,8 +163,9 @@
 
 </form>
 
-<form>
-  <textarea id="txtArea" rows="10" cols="70"></textarea>
+<form  class="form-row">
+  <label> Aggiungi nota al piano di studi:</label>
+  <textarea ng-model="studyplan.note" id="txtArea" rows="10" cols="70"></textarea>
 </form>
 
 
@@ -264,6 +265,14 @@
   </table>
 
   </div>
+
+ <div class="card row">    
+    <div class="card-heading bg-light"> Nota studente: </div>    
+    <div class="card-body"> {{studyplan.note}} </div>    
+ </div>    
+
+
+  <br>
 
   <div class="row">
     <div class="col-sm-10">
