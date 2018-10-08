@@ -62,5 +62,9 @@ Student GUI is accessible at:
 https://github.com/FrancescoErmini/CurriculaWebApp2/blob/master/client/admin/index.html
 
 
+Note on TODO
 
+https://stackoverflow.com/questions/26868372/calling-rest-api-from-the-same-server
+
+https://help.parsehub.com/hc/en-us/articles/217751808-API-Tutorial-How-to-get-run-data-using-Python-Flask
 

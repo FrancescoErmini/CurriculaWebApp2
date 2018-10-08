@@ -126,6 +126,7 @@ studyplan_schema = {
                 #'additionalProperties': false,
             },
             'minItems': 2
-        }
+        },
+        'note': {'type':'string'}
     }
 }

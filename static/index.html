@@ -163,6 +163,11 @@
 
 </form>
 
+<form>
+  <textarea id="txtArea" rows="10" cols="70"></textarea>
+</form>
+
+
 <div class="row">
 
     <div class="col">
@@ -257,7 +262,9 @@
     </td>
    </tr>
   </table>
+
   </div>
+
   <div class="row">
     <div class="col-sm-10">
   </div>
@@ -362,7 +369,8 @@ angular.module('app', ['ngRoute'])
         "student": "",
         "curriculum": 0,
         "courses": null,
-        "othercourses": [{"id": "", "name": "", "ssd": "", "cfu": 0}, {"id": "", "name": "", "ssd": "", "cfu": 0}]
+        "othercourses": [{"id": "", "name": "", "ssd": "", "cfu": 0}, {"id": "", "name": "", "ssd": "", "cfu": 0}],
+        "note": ""
       }
 
     
@@ -390,6 +398,8 @@ angular.module('app', ['ngRoute'])
               $scope.status =  JSON.stringify(error.data);
           });
       };
+
+      //submit -> setStudent() -> setStudyplan()
 
       $scope.submitstudyplan = function () {
         setStudent();  

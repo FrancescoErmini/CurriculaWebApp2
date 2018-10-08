@@ -66,6 +66,8 @@ GET    | /curriculum/<int:curriculum_id>/courses/                               
 POST   | /studyplan/						| studyplan_schema |  studyplan_schema | submit the studyplan to validate courses.
 '''
 
+#https://stackoverflow.com/questions/24578330/flask-how-to-serve-static-html
+
 @app.route('/')
 def hello_world():
     return current_app.send_static_file('index.html')
@@ -396,15 +398,19 @@ def setStudyplan():
 			course = Courses.query.get(c['id'])
 			studyplan.courses.append(course)
 		for c in data['othercourses']:
+			#in case the course is not found in the database, we create a new record
 			if OtherCourses.query.get(c['id']) is None:
 				othercourse = OtherCourses(id=c['id'], name=c['name'], cfu=c['cfu'], ssd=c['ssd'])
-			else: #in case another student wrote wrong value for this course code 
+			#in case the course is found, we update the values to avoid misconfiguration causes by the first student that insert those values
+			else: 
 				othercourse = OtherCourses.query.get(c['id'])
 				othercourse.name = c['name']
 				othercourse.ssd = c['ssd']
 				othercourse.cfu = c['cfu']
 			studyplan.othercourses.append(othercourse)
-			# db.session.add(othercourse) ??
+
+		if data['note'] is not None:
+			studyplan.note = data['note']
 
 		db.session.commit()
 	except Exception as e:
